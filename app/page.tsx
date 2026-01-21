@@ -61,16 +61,37 @@ function getStreak(history: CheckInEntry[]): number {
 const emotionLabels = ['😔', '😕', '😐', '🙂', '😊'];
 const cravingLabels = ['None', 'Low', 'Medium', 'High', 'Intense'];
 
-// Daily wisdom quotes
-const dailyQuotes = [
-  { text: "One day at a time. This is enough. Do not look back and grieve over the past, for it is gone.", source: "Alcoholics Anonymous" },
-  { text: "The only person you are destined to become is the person you decide to be.", source: "Ralph Waldo Emerson" },
-  { text: "Recovery is not a race. You don't have to feel guilty if it takes you longer than you thought.", source: "Recovery Wisdom" },
-  { text: "It does not matter how slowly you go as long as you do not stop.", source: "Confucius" },
-  { text: "Progress, not perfection.", source: "AA Slogan" },
-  { text: "You gain strength, courage, and confidence by every experience in which you really stop to look fear in the face.", source: "Eleanor Roosevelt" },
-  { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", source: "Nelson Mandela" },
+// The 12 Steps mapped to months for rotating wisdom
+const twelveSteps = [
+  { step: 1, name: "Powerlessness", principle: "Honesty", quote: "We admitted we were powerless over alcohol—that our lives had become unmanageable." },
+  { step: 2, name: "Hope", principle: "Hope", quote: "Came to believe that a Power greater than ourselves could restore us to sanity." },
+  { step: 3, name: "Faith", principle: "Faith", quote: "Made a decision to turn our will and our lives over to the care of God as we understood Him." },
+  { step: 4, name: "Courage", principle: "Courage", quote: "Made a searching and fearless moral inventory of ourselves." },
+  { step: 5, name: "Integrity", principle: "Integrity", quote: "Admitted to God, to ourselves, and to another human being the exact nature of our wrongs." },
+  { step: 6, name: "Willingness", principle: "Willingness", quote: "Were entirely ready to have God remove all these defects of character." },
+  { step: 7, name: "Humility", principle: "Humility", quote: "Humbly asked Him to remove our shortcomings." },
+  { step: 8, name: "Brotherly Love", principle: "Love", quote: "Made a list of all persons we had harmed, and became willing to make amends to them all." },
+  { step: 9, name: "Justice", principle: "Justice", quote: "Made direct amends to such people wherever possible, except when to do so would injure them or others." },
+  { step: 10, name: "Perseverance", principle: "Perseverance", quote: "Continued to take personal inventory and when we were wrong promptly admitted it." },
+  { step: 11, name: "Spiritual Awareness", principle: "Awareness", quote: "Sought through prayer and meditation to improve our conscious contact with God as we understood Him." },
+  { step: 12, name: "Service", principle: "Service", quote: "Having had a spiritual awakening as the result of these steps, we tried to carry this message to alcoholics, and to practice these principles in all our affairs." },
 ];
+
+// Supplementary quotes for variety within the month
+const stepQuotes: { [key: number]: string[] } = {
+  1: ["Surrender is not defeat—it's the beginning of victory.", "In admitting powerlessness, we find our true power."],
+  2: ["Hope is the thing with feathers that perches in the soul.", "Sanity begins with believing it's possible."],
+  3: ["Let go and let God.", "Turn it over—you were never meant to carry it alone."],
+  4: ["Know thyself.", "The unexamined life is not worth living."],
+  5: ["We are only as sick as our secrets.", "Freedom comes from sharing our truth."],
+  6: ["Readiness is all.", "Willingness opens doors that force cannot."],
+  7: ["True humility is not thinking less of yourself; it's thinking of yourself less.", "Ask, and it shall be given."],
+  8: ["To err is human; to forgive, divine.", "Healing relationships begins with willingness."],
+  9: ["Actions speak louder than words.", "Making amends is making peace."],
+  10: ["Progress, not perfection.", "Daily inventory keeps the soul clean."],
+  11: ["Be still and know.", "Prayer is talking to God; meditation is listening."],
+  12: ["We keep what we have by giving it away.", "Service is gratitude in action."],
+};
 
 export default function RecoveryLock() {
   const [screen, setScreen] = useState<'loading' | 'onboarding' | 'home' | 'checkin-emotion' | 'checkin-craving' | 'generating' | 'reflection' | 'history'>('loading');
@@ -80,16 +101,23 @@ export default function RecoveryLock() {
   const [emotionalState, setEmotionalState] = useState(2);
   const [cravingLevel, setCravingLevel] = useState(1);
   const [currentReflection, setCurrentReflection] = useState<CheckInEntry | null>(null);
-  const [dailyQuote, setDailyQuote] = useState(dailyQuotes[0]);
+  const [currentStep, setCurrentStep] = useState(twelveSteps[0]);
+  const [dailyQuote, setDailyQuote] = useState('');
 
   // Load profile and history from localStorage
   useEffect(() => {
     const savedProfile = localStorage.getItem('recoverylock_profile');
     const savedHistory = localStorage.getItem('recoverylock_history');
     
-    // Set daily quote based on day of year
-    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-    setDailyQuote(dailyQuotes[dayOfYear % dailyQuotes.length]);
+    // Set current month's step
+    const month = new Date().getMonth();
+    setCurrentStep(twelveSteps[month]);
+    
+    // Get a quote - rotate through step quotes based on day of month
+    const dayOfMonth = new Date().getDate();
+    const quotes = stepQuotes[month + 1];
+    const quoteIndex = dayOfMonth % quotes.length;
+    setDailyQuote(quotes[quoteIndex]);
     
     if (savedProfile) {
       const parsed = JSON.parse(savedProfile);
@@ -349,13 +377,17 @@ export default function RecoveryLock() {
 
         {/* Content */}
         <div className="flex-1 p-6 overflow-auto">
-          {/* Today's quote */}
+          {/* This Month's Step */}
           <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-5 mb-6 border border-orange-100">
-            <p className="text-orange-600 text-sm font-medium mb-2">✨ Daily Wisdom</p>
-            <p className="text-gray-800 italic leading-relaxed">
-              "{dailyQuote.text}"
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-orange-600 text-sm font-medium">✨ {new Date().toLocaleString('default', { month: 'long' })}'s Focus</span>
+              <span className="bg-orange-200 text-orange-700 text-xs px-2 py-0.5 rounded-full">Step {currentStep.step}</span>
+            </div>
+            <p className="text-gray-800 font-medium mb-1">{currentStep.principle}</p>
+            <p className="text-gray-600 text-sm italic leading-relaxed">
+              "{dailyQuote}"
             </p>
-            <p className="text-gray-500 text-sm mt-3">— {dailyQuote.source}</p>
+            <p className="text-gray-400 text-xs mt-2">— {currentStep.name}</p>
           </div>
 
           {/* Recent check-ins */}
