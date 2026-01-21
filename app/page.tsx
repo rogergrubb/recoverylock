@@ -438,28 +438,82 @@ export default function RecoveryLock() {
   // Check-in: Emotional state
   if (screen === 'checkin-emotion') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-500 to-teal-600 flex flex-col items-center justify-center p-6 text-white">
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #10b981, #0d9488)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        color: 'white',
+        position: 'relative'
+      }}>
+        <style>{`
+          input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+          }
+          input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+          }
+          input[type="range"]::-moz-range-thumb {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+          }
+        `}</style>
         <button
           onClick={() => setScreen('home')}
-          className="absolute top-6 left-6 text-white/80 active:scale-95 transition"
+          style={{
+            position: 'absolute',
+            top: '24px',
+            left: '24px',
+            color: 'rgba(255,255,255,0.8)',
+            background: 'none',
+            border: 'none',
+            fontSize: '16px',
+            cursor: 'pointer'
+          }}
         >
           ← Back
         </button>
         
-        <div className="text-7xl mb-6 transition-all duration-200">{emotionLabels[emotionalState]}</div>
-        <h2 className="text-2xl font-bold mb-2">How are you feeling?</h2>
-        <p className="text-white/80 mb-10">Be honest with yourself</p>
+        <div style={{ fontSize: '80px', marginBottom: '24px', transition: 'all 0.2s' }}>
+          {emotionLabels[emotionalState]}
+        </div>
+        <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
+          How are you feeling?
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '40px', fontSize: '16px' }}>
+          Be honest with yourself
+        </p>
         
-        <div className="w-full max-w-xs mb-10">
+        <div style={{ width: '100%', maxWidth: '300px', marginBottom: '40px' }}>
           <input
             type="range"
             min="0"
             max="4"
             value={emotionalState}
             onChange={(e) => setEmotionalState(parseInt(e.target.value))}
-            className="w-full h-3 bg-white/30 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-7 [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg"
           />
-          <div className="flex justify-between mt-3 text-sm text-white/70">
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '14px', color: 'rgba(255,255,255,0.7)' }}>
             <span>Struggling</span>
             <span>Great</span>
           </div>
@@ -467,7 +521,19 @@ export default function RecoveryLock() {
         
         <button
           onClick={() => setScreen('checkin-craving')}
-          className="w-full max-w-xs bg-white text-emerald-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+          style={{
+            width: '100%',
+            maxWidth: '300px',
+            background: 'white',
+            color: '#059669',
+            fontWeight: '600',
+            padding: '16px',
+            borderRadius: '9999px',
+            fontSize: '18px',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+          }}
         >
           Continue
         </button>
@@ -478,28 +544,50 @@ export default function RecoveryLock() {
   // Check-in: Craving level
   if (screen === 'checkin-craving') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-500 to-indigo-600 flex flex-col items-center justify-center p-6 text-white">
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #3b82f6, #4f46e5)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        color: 'white',
+        position: 'relative'
+      }}>
         <button
           onClick={() => setScreen('checkin-emotion')}
-          className="absolute top-6 left-6 text-white/80 active:scale-95 transition"
+          style={{
+            position: 'absolute',
+            top: '24px',
+            left: '24px',
+            color: 'rgba(255,255,255,0.8)',
+            background: 'none',
+            border: 'none',
+            fontSize: '16px',
+            cursor: 'pointer'
+          }}
         >
           ← Back
         </button>
         
-        <div className="text-7xl mb-6">🌊</div>
-        <h2 className="text-2xl font-bold mb-2">Any cravings today?</h2>
-        <p className="text-white/80 mb-10 text-lg">{cravingLabels[cravingLevel]}</p>
+        <div style={{ fontSize: '80px', marginBottom: '24px' }}>🌊</div>
+        <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
+          Any cravings today?
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '40px', fontSize: '18px' }}>
+          {cravingLabels[cravingLevel]}
+        </p>
         
-        <div className="w-full max-w-xs mb-10">
+        <div style={{ width: '100%', maxWidth: '300px', marginBottom: '40px' }}>
           <input
             type="range"
             min="0"
             max="4"
             value={cravingLevel}
             onChange={(e) => setCravingLevel(parseInt(e.target.value))}
-            className="w-full h-3 bg-white/30 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-7 [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg"
           />
-          <div className="flex justify-between mt-3 text-sm text-white/70">
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '14px', color: 'rgba(255,255,255,0.7)' }}>
             <span>None</span>
             <span>Intense</span>
           </div>
@@ -507,7 +595,19 @@ export default function RecoveryLock() {
         
         <button
           onClick={() => setScreen('checkin-feelings')}
-          className="w-full max-w-xs bg-white text-blue-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+          style={{
+            width: '100%',
+            maxWidth: '300px',
+            background: 'white',
+            color: '#3b82f6',
+            fontWeight: '600',
+            padding: '16px',
+            borderRadius: '9999px',
+            fontSize: '18px',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+          }}
         >
           Continue
         </button>
@@ -518,32 +618,82 @@ export default function RecoveryLock() {
   // Check-in: Free-text feelings description
   if (screen === 'checkin-feelings') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-500 to-violet-600 flex flex-col items-center justify-center p-6 text-white">
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #8b5cf6, #7c3aed)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        color: 'white',
+        position: 'relative'
+      }}>
         <button
           onClick={() => setScreen('checkin-craving')}
-          className="absolute top-6 left-6 text-white/80 active:scale-95 transition"
+          style={{
+            position: 'absolute',
+            top: '24px',
+            left: '24px',
+            color: 'rgba(255,255,255,0.8)',
+            background: 'none',
+            border: 'none',
+            fontSize: '16px',
+            cursor: 'pointer'
+          }}
         >
           ← Back
         </button>
         
-        <div className="text-6xl mb-6">💭</div>
-        <h2 className="text-2xl font-bold mb-2">What's on your mind?</h2>
-        <p className="text-white/70 mb-6 text-center px-4">Share what you're going through right now. This helps personalize your reflection.</p>
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>💭</div>
+        <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
+          What's on your mind?
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '24px', textAlign: 'center', padding: '0 16px', fontSize: '15px', lineHeight: '1.5' }}>
+          Share what you're going through right now. This helps personalize your reflection.
+        </p>
         
         <textarea
           value={feelingsText}
           onChange={(e) => setFeelingsText(e.target.value)}
           placeholder="I'm feeling anxious about a work meeting... I'm grateful for my family's support... I'm struggling with loneliness today..."
           rows={4}
-          className="w-full max-w-xs bg-white/15 border border-white/30 rounded-2xl px-4 py-4 text-lg mb-6 placeholder-white/40 resize-none focus:outline-none focus:border-white/60 transition"
+          style={{
+            width: '100%',
+            maxWidth: '300px',
+            background: 'rgba(255,255,255,0.15)',
+            border: '2px solid rgba(255,255,255,0.3)',
+            borderRadius: '16px',
+            padding: '16px',
+            fontSize: '16px',
+            color: 'white',
+            marginBottom: '16px',
+            resize: 'none',
+            outline: 'none',
+            lineHeight: '1.5'
+          }}
         />
         
-        <p className="text-white/50 text-sm mb-6">Optional - skip if you prefer</p>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '24px' }}>
+          Optional - skip if you prefer
+        </p>
         
-        <div className="w-full max-w-xs space-y-3">
+        <div style={{ width: '100%', maxWidth: '300px' }}>
           <button
             onClick={generateReflection}
-            className="w-full bg-white text-purple-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+            style={{
+              width: '100%',
+              background: 'white',
+              color: '#7c3aed',
+              fontWeight: '600',
+              padding: '16px',
+              borderRadius: '9999px',
+              fontSize: '18px',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+              marginBottom: '12px'
+            }}
           >
             Get My Reflection
           </button>
@@ -552,7 +702,17 @@ export default function RecoveryLock() {
               setFeelingsText('');
               generateReflection();
             }}
-            className="w-full bg-white/20 text-white font-medium py-3 rounded-full text-base active:scale-95 transition"
+            style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.2)',
+              color: 'white',
+              fontWeight: '500',
+              padding: '14px',
+              borderRadius: '9999px',
+              fontSize: '16px',
+              border: 'none',
+              cursor: 'pointer'
+            }}
           >
             Skip
           </button>
@@ -564,15 +724,34 @@ export default function RecoveryLock() {
   // Generating
   if (screen === 'generating') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-500 to-purple-700 flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-7xl mb-6 animate-bounce">✨</div>
-        <h2 className="text-2xl font-bold mb-2">Creating your reflection...</h2>
-        <p className="text-white/80">Personalized just for you, {profile.name}</p>
-        <div className="mt-8 flex gap-2">
-          <div className="w-3 h-3 bg-white/50 rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></div>
-          <div className="w-3 h-3 bg-white/50 rounded-full animate-pulse" style={{ animationDelay: '150ms' }}></div>
-          <div className="w-3 h-3 bg-white/50 rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></div>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #a855f7, #7e22ce)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        color: 'white'
+      }}>
+        <div style={{ fontSize: '80px', marginBottom: '24px', animation: 'bounce 1s infinite' }}>✨</div>
+        <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>Creating your reflection...</h2>
+        <p style={{ color: 'rgba(255,255,255,0.8)' }}>Personalized just for you, {profile.name}</p>
+        <div style={{ marginTop: '32px', display: 'flex', gap: '8px' }}>
+          <div style={{ width: '12px', height: '12px', background: 'rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'pulse 1.5s infinite' }}></div>
+          <div style={{ width: '12px', height: '12px', background: 'rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'pulse 1.5s infinite 0.2s' }}></div>
+          <div style={{ width: '12px', height: '12px', background: 'rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'pulse 1.5s infinite 0.4s' }}></div>
         </div>
+        <style>{`
+          @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+          }
+        `}</style>
       </div>
     );
   }
@@ -580,20 +759,41 @@ export default function RecoveryLock() {
   // Reflection
   if (screen === 'reflection' && currentReflection) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-orange-500 to-orange-600 flex flex-col p-6 text-white">
-        <div className="flex-1 flex flex-col items-center justify-center py-8">
-          <div className="text-6xl mb-6">🙏</div>
-          <h2 className="text-lg font-medium text-white/80 mb-4 uppercase tracking-wide">{currentReflection.title}</h2>
-          <p className="text-xl text-center leading-relaxed mb-8 max-w-md px-2">
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #f97316, #ea580c)',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '24px',
+        color: 'white'
+      }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}>
+          <div style={{ fontSize: '64px', marginBottom: '24px' }}>🙏</div>
+          <h2 style={{ fontSize: '16px', fontWeight: '500', color: 'rgba(255,255,255,0.8)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '2px' }}>
+            {currentReflection.title}
+          </h2>
+          <p style={{ fontSize: '20px', textAlign: 'center', lineHeight: '1.6', marginBottom: '32px', maxWidth: '400px', padding: '0 8px' }}>
             {currentReflection.reflection}
           </p>
-          <p className="text-white/60 text-sm">— {currentReflection.source}</p>
+          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>— {currentReflection.source}</p>
         </div>
         
-        <div className="space-y-3 pb-8">
+        <div style={{ paddingBottom: '32px' }}>
           <button
             onClick={() => setScreen('home')}
-            className="w-full bg-white text-orange-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+            style={{
+              width: '100%',
+              background: 'white',
+              color: '#ea580c',
+              fontWeight: '600',
+              padding: '16px',
+              borderRadius: '9999px',
+              fontSize: '18px',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+              marginBottom: '12px'
+            }}
           >
             Done
           </button>
@@ -604,7 +804,17 @@ export default function RecoveryLock() {
               setFeelingsText('');
               setScreen('checkin-emotion');
             }}
-            className="w-full bg-white/20 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+            style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.2)',
+              color: 'white',
+              fontWeight: '600',
+              padding: '16px',
+              borderRadius: '9999px',
+              fontSize: '18px',
+              border: 'none',
+              cursor: 'pointer'
+            }}
           >
             Check In Again
           </button>
