@@ -1,0 +1,587 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+
+// Types
+interface UserProfile {
+  name: string;
+  sobrietyDate: string;
+  motivation: string;
+  onboardingComplete: boolean;
+}
+
+interface CheckInEntry {
+  id: string;
+  date: string;
+  emotionalState: number;
+  cravingLevel: number;
+  reflection: string;
+  title: string;
+  source: string;
+}
+
+// Calculate days sober
+function getDaysSober(sobrietyDate: string): number {
+  const start = new Date(sobrietyDate);
+  const now = new Date();
+  const diff = now.getTime() - start.getTime();
+  return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+}
+
+// Get streak from history
+function getStreak(history: CheckInEntry[]): number {
+  if (history.length === 0) return 0;
+  
+  const sortedHistory = [...history].sort((a, b) => 
+    new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+  
+  let streak = 0;
+  let currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  
+  for (const entry of sortedHistory) {
+    const entryDate = new Date(entry.date);
+    entryDate.setHours(0, 0, 0, 0);
+    
+    const diffDays = Math.floor((currentDate.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0 || diffDays === 1) {
+      streak++;
+      currentDate = entryDate;
+    } else {
+      break;
+    }
+  }
+  
+  return streak;
+}
+
+// Emotional state labels
+const emotionLabels = ['😔', '😕', '😐', '🙂', '😊'];
+const cravingLabels = ['None', 'Low', 'Medium', 'High', 'Intense'];
+
+// Daily wisdom quotes
+const dailyQuotes = [
+  { text: "One day at a time. This is enough. Do not look back and grieve over the past, for it is gone.", source: "Alcoholics Anonymous" },
+  { text: "The only person you are destined to become is the person you decide to be.", source: "Ralph Waldo Emerson" },
+  { text: "Recovery is not a race. You don't have to feel guilty if it takes you longer than you thought.", source: "Recovery Wisdom" },
+  { text: "It does not matter how slowly you go as long as you do not stop.", source: "Confucius" },
+  { text: "Progress, not perfection.", source: "AA Slogan" },
+  { text: "You gain strength, courage, and confidence by every experience in which you really stop to look fear in the face.", source: "Eleanor Roosevelt" },
+  { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", source: "Nelson Mandela" },
+];
+
+export default function RecoveryLock() {
+  const [screen, setScreen] = useState<'loading' | 'onboarding' | 'home' | 'checkin-emotion' | 'checkin-craving' | 'generating' | 'reflection' | 'history'>('loading');
+  const [onboardingStep, setOnboardingStep] = useState(0);
+  const [profile, setProfile] = useState<UserProfile>({ name: '', sobrietyDate: '', motivation: '', onboardingComplete: false });
+  const [history, setHistory] = useState<CheckInEntry[]>([]);
+  const [emotionalState, setEmotionalState] = useState(2);
+  const [cravingLevel, setCravingLevel] = useState(1);
+  const [currentReflection, setCurrentReflection] = useState<CheckInEntry | null>(null);
+  const [dailyQuote, setDailyQuote] = useState(dailyQuotes[0]);
+
+  // Load profile and history from localStorage
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('recoverylock_profile');
+    const savedHistory = localStorage.getItem('recoverylock_history');
+    
+    // Set daily quote based on day of year
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+    setDailyQuote(dailyQuotes[dayOfYear % dailyQuotes.length]);
+    
+    if (savedProfile) {
+      const parsed = JSON.parse(savedProfile);
+      setProfile(parsed);
+      if (parsed.onboardingComplete) {
+        setScreen('home');
+      } else {
+        setScreen('onboarding');
+      }
+    } else {
+      setScreen('onboarding');
+    }
+    
+    if (savedHistory) {
+      setHistory(JSON.parse(savedHistory));
+    }
+  }, []);
+
+  // Save profile to localStorage
+  const saveProfile = (newProfile: UserProfile) => {
+    setProfile(newProfile);
+    localStorage.setItem('recoverylock_profile', JSON.stringify(newProfile));
+  };
+
+  // Save history to localStorage
+  const saveHistory = (newHistory: CheckInEntry[]) => {
+    setHistory(newHistory);
+    localStorage.setItem('recoverylock_history', JSON.stringify(newHistory));
+  };
+
+  // Generate reflection using AI
+  const generateReflection = async () => {
+    setScreen('generating');
+    
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: profile.name,
+          daysSober: getDaysSober(profile.sobrietyDate),
+          motivation: profile.motivation,
+          emotionalState,
+          cravingLevel,
+          checkInCount: history.length + 1
+        })
+      });
+      
+      if (!response.ok) throw new Error('Generation failed');
+      
+      const data = await response.json();
+      
+      const newEntry: CheckInEntry = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        emotionalState,
+        cravingLevel,
+        reflection: data.reflection,
+        title: data.title,
+        source: data.source
+      };
+      
+      setCurrentReflection(newEntry);
+      saveHistory([newEntry, ...history]);
+      setScreen('reflection');
+    } catch (error) {
+      console.error('Generation failed:', error);
+      // Fallback reflection based on emotional state
+      const fallbackTitles = ['Strength', 'Courage', 'Hope', 'Serenity', 'Gratitude'];
+      const emotionMessages = [
+        `${profile.name}, even on the hardest days, showing up matters. You've made it ${getDaysSober(profile.sobrietyDate)} days. That takes incredible strength. Be gentle with yourself today.`,
+        `${profile.name}, feeling uncertain is part of the journey. ${getDaysSober(profile.sobrietyDate)} days proves you can do hard things. Take it one moment at a time.`,
+        `${profile.name}, steady progress is still progress. ${getDaysSober(profile.sobrietyDate)} days of choosing yourself, every single day. Keep going.`,
+        `${profile.name}, you're doing great. ${getDaysSober(profile.sobrietyDate)} days of recovery shows your commitment. Celebrate this moment.`,
+        `${profile.name}, what a gift today is. ${getDaysSober(profile.sobrietyDate)} days of freedom. Your perseverance is inspiring.`
+      ];
+      
+      const fallbackEntry: CheckInEntry = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        emotionalState,
+        cravingLevel,
+        reflection: emotionMessages[emotionalState],
+        title: fallbackTitles[emotionalState],
+        source: 'Recovery Lock'
+      };
+      setCurrentReflection(fallbackEntry);
+      saveHistory([fallbackEntry, ...history]);
+      setScreen('reflection');
+    }
+  };
+
+  // Loading screen
+  if (screen === 'loading') {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
+        <div className="relative mb-6">
+          <div className="text-7xl animate-pulse">🔒</div>
+        </div>
+        <h1 className="text-2xl font-bold text-gray-800">recovery lock</h1>
+        <p className="text-gray-500 mt-2">block your phone until you check in</p>
+      </div>
+    );
+  }
+
+  // Onboarding
+  if (screen === 'onboarding') {
+    const screens = [
+      // Welcome
+      <div key="welcome" className="min-h-screen bg-gradient-to-b from-orange-500 to-orange-600 flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-8xl mb-6 drop-shadow-lg">🔒</div>
+        <h1 className="text-3xl font-bold mb-3">Recovery Lock</h1>
+        <p className="text-lg opacity-90 mb-8 text-center">Turn screen time into recovery time</p>
+        <button
+          onClick={() => setOnboardingStep(1)}
+          className="w-full max-w-xs bg-white text-orange-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+        >
+          Get Started
+        </button>
+      </div>,
+      
+      // Screen time shock
+      <div key="shock" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-6xl mb-6">📱</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">The average person checks their phone</h2>
+        <div className="text-7xl font-bold text-orange-500 mb-4">96x</div>
+        <p className="text-lg opacity-70 mb-8 text-center">per day. What if each check-in strengthened your recovery?</p>
+        <button
+          onClick={() => setOnboardingStep(2)}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          Continue
+        </button>
+      </div>,
+      
+      // Name input
+      <div key="name" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+        <h2 className="text-2xl font-bold mb-8">What should we call you?</h2>
+        <input
+          type="text"
+          value={profile.name}
+          onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+          placeholder="Your first name"
+          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-lg text-center mb-8 placeholder-white/50 focus:outline-none focus:border-orange-500"
+          autoFocus
+        />
+        <button
+          onClick={() => profile.name && setOnboardingStep(3)}
+          disabled={!profile.name}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
+        >
+          Continue
+        </button>
+      </div>,
+      
+      // Sobriety date
+      <div key="date" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-5xl mb-4">📅</div>
+        <h2 className="text-2xl font-bold mb-2">When did your journey begin?</h2>
+        <p className="text-white/60 mb-8 text-center">Your sobriety or recovery start date</p>
+        <input
+          type="date"
+          value={profile.sobrietyDate}
+          onChange={(e) => setProfile({ ...profile, sobrietyDate: e.target.value })}
+          max={new Date().toISOString().split('T')[0]}
+          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-lg text-center mb-8 text-white focus:outline-none focus:border-orange-500 [color-scheme:dark]"
+        />
+        <button
+          onClick={() => profile.sobrietyDate && setOnboardingStep(4)}
+          disabled={!profile.sobrietyDate}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
+        >
+          Continue
+        </button>
+      </div>,
+      
+      // Motivation
+      <div key="motivation" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-5xl mb-4">💪</div>
+        <h2 className="text-2xl font-bold mb-2">Why are you in recovery?</h2>
+        <p className="text-white/60 mb-6 text-center">This helps personalize your experience</p>
+        <textarea
+          value={profile.motivation}
+          onChange={(e) => setProfile({ ...profile, motivation: e.target.value })}
+          placeholder="For my family, my health, to be the person I know I can be..."
+          rows={4}
+          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-lg mb-8 placeholder-white/50 resize-none focus:outline-none focus:border-orange-500"
+        />
+        <button
+          onClick={() => {
+            const completeProfile = { ...profile, onboardingComplete: true };
+            saveProfile(completeProfile);
+            setOnboardingStep(5);
+          }}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          Complete Setup
+        </button>
+      </div>,
+      
+      // Ready
+      <div key="ready" className="min-h-screen bg-gradient-to-b from-green-500 to-green-600 flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-7xl mb-6">✨</div>
+        <h2 className="text-3xl font-bold mb-4">You're all set, {profile.name}!</h2>
+        <p className="text-lg opacity-90 mb-8 text-center">
+          {getDaysSober(profile.sobrietyDate)} days of recovery and counting.
+          <br />Every check-in makes you stronger.
+        </p>
+        <button
+          onClick={() => setScreen('home')}
+          className="w-full max-w-xs bg-white text-green-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+        >
+          Start Using Recovery Lock
+        </button>
+      </div>
+    ];
+    
+    return screens[onboardingStep];
+  }
+
+  // Home screen
+  if (screen === 'home') {
+    const daysSober = getDaysSober(profile.sobrietyDate);
+    const streak = getStreak(history);
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+    
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        {/* Header */}
+        <div className="bg-gradient-to-b from-orange-500 to-orange-600 p-6 pt-12 pb-8 rounded-b-[32px] shadow-lg">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <p className="text-white/80 text-sm">Good {greeting},</p>
+              <h1 className="text-white text-2xl font-bold">{profile.name}</h1>
+            </div>
+            <button 
+              onClick={() => setScreen('history')}
+              className="bg-white/20 p-3 rounded-full active:scale-95 transition"
+            >
+              <span className="text-xl">📖</span>
+            </button>
+          </div>
+          
+          {/* Stats cards */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white/20 backdrop-blur rounded-2xl p-4">
+              <p className="text-white/80 text-sm">Days Sober</p>
+              <p className="text-white text-3xl font-bold">{daysSober}</p>
+            </div>
+            <div className="bg-white/20 backdrop-blur rounded-2xl p-4">
+              <p className="text-white/80 text-sm">Check-in Streak</p>
+              <p className="text-white text-3xl font-bold">{streak} 🔥</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 p-6 overflow-auto">
+          {/* Today's quote */}
+          <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-5 mb-6 border border-orange-100">
+            <p className="text-orange-600 text-sm font-medium mb-2">✨ Daily Wisdom</p>
+            <p className="text-gray-800 italic leading-relaxed">
+              "{dailyQuote.text}"
+            </p>
+            <p className="text-gray-500 text-sm mt-3">— {dailyQuote.source}</p>
+          </div>
+
+          {/* Recent check-ins */}
+          {history.length > 0 && (
+            <div>
+              <h3 className="text-gray-800 font-semibold mb-3">Recent Reflections</h3>
+              <div className="space-y-3">
+                {history.slice(0, 3).map((entry) => (
+                  <div 
+                    key={entry.id} 
+                    className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition shadow-sm border border-gray-100"
+                    onClick={() => {
+                      setCurrentReflection(entry);
+                      setScreen('reflection');
+                    }}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-800">{entry.title}</p>
+                        <p className="text-gray-500 text-sm">{entry.source}</p>
+                      </div>
+                      <p className="text-gray-400 text-sm ml-2">
+                        {new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Check-in button */}
+        <div className="p-6 pb-8 bg-gradient-to-t from-gray-50">
+          <button
+            onClick={() => setScreen('checkin-emotion')}
+            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold py-4 rounded-full text-lg shadow-lg flex items-center justify-center gap-2 active:scale-[0.98] transition"
+          >
+            <span>🔓</span> Check In Now
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Check-in: Emotional state
+  if (screen === 'checkin-emotion') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-emerald-500 to-teal-600 flex flex-col items-center justify-center p-6 text-white">
+        <button
+          onClick={() => setScreen('home')}
+          className="absolute top-6 left-6 text-white/80 active:scale-95 transition"
+        >
+          ← Back
+        </button>
+        
+        <div className="text-7xl mb-6 transition-all duration-200">{emotionLabels[emotionalState]}</div>
+        <h2 className="text-2xl font-bold mb-2">How are you feeling?</h2>
+        <p className="text-white/80 mb-10">Be honest with yourself</p>
+        
+        <div className="w-full max-w-xs mb-10">
+          <input
+            type="range"
+            min="0"
+            max="4"
+            value={emotionalState}
+            onChange={(e) => setEmotionalState(parseInt(e.target.value))}
+            className="w-full h-3 bg-white/30 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-7 [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg"
+          />
+          <div className="flex justify-between mt-3 text-sm text-white/70">
+            <span>Struggling</span>
+            <span>Great</span>
+          </div>
+        </div>
+        
+        <button
+          onClick={() => setScreen('checkin-craving')}
+          className="w-full max-w-xs bg-white text-emerald-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+        >
+          Continue
+        </button>
+      </div>
+    );
+  }
+
+  // Check-in: Craving level
+  if (screen === 'checkin-craving') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-blue-500 to-indigo-600 flex flex-col items-center justify-center p-6 text-white">
+        <button
+          onClick={() => setScreen('checkin-emotion')}
+          className="absolute top-6 left-6 text-white/80 active:scale-95 transition"
+        >
+          ← Back
+        </button>
+        
+        <div className="text-7xl mb-6">🌊</div>
+        <h2 className="text-2xl font-bold mb-2">Any cravings today?</h2>
+        <p className="text-white/80 mb-10 text-lg">{cravingLabels[cravingLevel]}</p>
+        
+        <div className="w-full max-w-xs mb-10">
+          <input
+            type="range"
+            min="0"
+            max="4"
+            value={cravingLevel}
+            onChange={(e) => setCravingLevel(parseInt(e.target.value))}
+            className="w-full h-3 bg-white/30 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-7 [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg"
+          />
+          <div className="flex justify-between mt-3 text-sm text-white/70">
+            <span>None</span>
+            <span>Intense</span>
+          </div>
+        </div>
+        
+        <button
+          onClick={generateReflection}
+          className="w-full max-w-xs bg-white text-blue-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+        >
+          Get My Reflection
+        </button>
+      </div>
+    );
+  }
+
+  // Generating
+  if (screen === 'generating') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-500 to-purple-700 flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-7xl mb-6 animate-bounce">✨</div>
+        <h2 className="text-2xl font-bold mb-2">Creating your reflection...</h2>
+        <p className="text-white/80">Personalized just for you, {profile.name}</p>
+        <div className="mt-8 flex gap-2">
+          <div className="w-3 h-3 bg-white/50 rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></div>
+          <div className="w-3 h-3 bg-white/50 rounded-full animate-pulse" style={{ animationDelay: '150ms' }}></div>
+          <div className="w-3 h-3 bg-white/50 rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Reflection
+  if (screen === 'reflection' && currentReflection) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-orange-500 to-orange-600 flex flex-col p-6 text-white">
+        <div className="flex-1 flex flex-col items-center justify-center py-8">
+          <div className="text-6xl mb-6">🙏</div>
+          <h2 className="text-lg font-medium text-white/80 mb-4 uppercase tracking-wide">{currentReflection.title}</h2>
+          <p className="text-xl text-center leading-relaxed mb-8 max-w-md px-2">
+            {currentReflection.reflection}
+          </p>
+          <p className="text-white/60 text-sm">— {currentReflection.source}</p>
+        </div>
+        
+        <div className="space-y-3 pb-8">
+          <button
+            onClick={() => setScreen('home')}
+            className="w-full bg-white text-orange-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+          >
+            Done
+          </button>
+          <button
+            onClick={() => {
+              setEmotionalState(2);
+              setCravingLevel(1);
+              setScreen('checkin-emotion');
+            }}
+            className="w-full bg-white/20 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          >
+            Check In Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // History
+  if (screen === 'history') {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-gradient-to-b from-orange-500 to-orange-600 p-6 pt-12 pb-8 rounded-b-[32px]">
+          <button
+            onClick={() => setScreen('home')}
+            className="text-white/80 mb-4 active:scale-95 transition"
+          >
+            ← Back
+          </button>
+          <h1 className="text-white text-2xl font-bold">Your Journey</h1>
+          <p className="text-white/80">{history.length} reflections saved</p>
+        </div>
+        
+        <div className="p-6 space-y-4">
+          {history.length === 0 ? (
+            <div className="text-center py-16 text-gray-500">
+              <div className="text-6xl mb-4">📖</div>
+              <p className="font-medium">No reflections yet.</p>
+              <p className="text-sm mt-1">Complete a check-in to get started!</p>
+            </div>
+          ) : (
+            history.map((entry) => (
+              <div 
+                key={entry.id}
+                className="bg-white rounded-xl p-5 cursor-pointer hover:shadow-md transition shadow-sm border border-gray-100"
+                onClick={() => {
+                  setCurrentReflection(entry);
+                  setScreen('reflection');
+                }}
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-semibold text-gray-800">{entry.title}</h3>
+                  <span className="text-gray-400 text-sm">
+                    {new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </span>
+                </div>
+                <p className="text-gray-600 text-sm line-clamp-2 mb-3">{entry.reflection}</p>
+                <div className="flex gap-4 text-sm text-gray-500">
+                  <span>Mood: {emotionLabels[entry.emotionalState]}</span>
+                  <span>Craving: {cravingLabels[entry.cravingLevel]}</span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
