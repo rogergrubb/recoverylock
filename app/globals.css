@@ -11,15 +11,21 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 html, body {
   height: 100%;
   overflow-x: hidden;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -29,45 +35,73 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Custom range slider styling */
+/* CRITICAL: Custom range slider styling - must work everywhere */
 input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-}
-
-input[type="range"]::-webkit-slider-track {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  width: 100%;
   height: 12px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.35) !important;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.35);
 }
 
 input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 28px;
-  height: 28px;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: white;
+  background: white !important;
   cursor: pointer;
-  margin-top: -8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  margin-top: -12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+  border: none;
 }
 
 input[type="range"]::-moz-range-track {
+  width: 100%;
   height: 12px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white !important;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+}
+
+/* MS Edge */
+input[type="range"]::-ms-track {
+  width: 100%;
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+}
+
+input[type="range"]::-ms-thumb {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: white;
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
 }
 
 /* Line clamp utility */
@@ -86,4 +120,23 @@ input[type="range"]::-moz-range-thumb {
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
 }
