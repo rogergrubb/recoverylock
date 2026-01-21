@@ -8,6 +8,7 @@ interface GenerateRequest {
   motivation: string;
   emotionalState: number; // 0-4 (struggling to great)
   cravingLevel: number; // 0-4 (none to intense)
+  feelingsText: string; // User's own description of how they're feeling
   checkInCount: number;
 }
 
@@ -124,7 +125,7 @@ function getCurrentStep() {
 export async function POST(request: NextRequest) {
   try {
     const body: GenerateRequest = await request.json();
-    const { name, daysSober, motivation, emotionalState, cravingLevel, checkInCount } = body;
+    const { name, daysSober, motivation, emotionalState, cravingLevel, feelingsText, checkInCount } = body;
 
     // Get this month's step for thematic content
     const currentStep = getCurrentStep();
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
 
     // If no API key, return thoughtful fallback
     if (!ANTHROPIC_API_KEY) {
-      return NextResponse.json(generateFallback(name, daysSober, emotionalState, cravingLevel, checkInCount, currentStep));
+      return NextResponse.json(generateFallback(name, daysSober, emotionalState, cravingLevel, feelingsText, checkInCount, currentStep));
     }
 
     const prompt = `You are a compassionate recovery coach creating a brief, personalized reflection for someone in addiction recovery. Be warm, supportive, and grounded in recovery principles.
@@ -143,6 +144,7 @@ Context about this person:
 - Their personal motivation for recovery: "${motivation || 'Personal growth and health'}"
 - Current emotional state: ${emotionDescriptions[emotionalState]}
 - Craving level: ${cravingDescriptions[cravingLevel]}
+${feelingsText ? `- What they shared about how they're feeling: "${feelingsText}"` : ''}
 - This is check-in #${checkInCount} for them
 
 MONTHLY THEME (${monthName} - Step ${currentStep.step}):
@@ -152,7 +154,7 @@ Key themes to weave in: ${currentStep.themes.join(', ')}
 
 Write a 2-3 sentence personalized reflection that:
 1. Uses their name naturally (not at the very start)
-2. Acknowledges their current emotional state and craving level appropriately
+2. ${feelingsText ? 'Directly addresses what they shared about their feelings' : 'Acknowledges their current emotional state and craving level appropriately'}
 3. Weaves in the monthly step's spiritual principle or themes naturally
 4. References their motivation if relevant
 5. Is encouraging without being preachy
@@ -162,6 +164,7 @@ ${emotionalState <= 1 ? 'They need extra support and gentle encouragement today.
 ${cravingLevel >= 3 ? 'Acknowledge their strength in facing cravings. Relate to the step principle of ' + currentStep.spiritualPrinciple.toLowerCase() + '.' : ''}
 ${daysSober < 30 ? 'They are in early recovery - celebrate every day as a victory.' : ''}
 ${daysSober >= 365 ? 'Acknowledge their significant milestone while keeping them grounded in daily practice.' : ''}
+${feelingsText ? 'IMPORTANT: Since they took the time to share their feelings, make sure the reflection directly speaks to what they wrote.' : ''}
 
 Respond with ONLY a JSON object in this exact format:
 {"reflection": "your reflection text here"}`;
@@ -184,7 +187,7 @@ Respond with ONLY a JSON object in this exact format:
 
     if (!response.ok) {
       console.error('Anthropic API error:', response.status);
-      return NextResponse.json(generateFallback(name, daysSober, emotionalState, cravingLevel, checkInCount, currentStep));
+      return NextResponse.json(generateFallback(name, daysSober, emotionalState, cravingLevel, feelingsText, checkInCount, currentStep));
     }
 
     const data = await response.json();
@@ -224,6 +227,7 @@ function generateFallback(
   daysSober: number, 
   emotionalState: number, 
   cravingLevel: number,
+  feelingsText: string,
   checkInCount: number,
   currentStep: typeof twelveSteps[0]
 ) {
