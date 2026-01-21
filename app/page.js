@@ -79,6 +79,10 @@ export default function RecoveryLockApp() {
   const [totalCheckins, setTotalCheckins] = useState(0)
   const [sobrietyDate, setSobrietyDate] = useState('')
   const [sobrietyDays, setSobrietyDays] = useState(0)
+  const [showPaywall, setShowPaywall] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState('yearly')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isPremium, setIsPremium] = useState(false)
 
   // Load saved data from localStorage
   useEffect(() => {
@@ -86,13 +90,23 @@ export default function RecoveryLockApp() {
       const savedStreak = localStorage.getItem('recoverylock_streak')
       const savedCheckins = localStorage.getItem('recoverylock_checkins')
       const savedSobrietyDate = localStorage.getItem('recoverylock_sobriety_date')
+      const savedPremium = localStorage.getItem('recoverylock_premium')
       
       if (savedStreak) setStreak(parseInt(savedStreak))
       if (savedCheckins) setTotalCheckins(parseInt(savedCheckins))
+      if (savedPremium === 'true') setIsPremium(true)
       if (savedSobrietyDate) {
         setSobrietyDate(savedSobrietyDate)
         const days = Math.floor((new Date() - new Date(savedSobrietyDate)) / (1000 * 60 * 60 * 24))
         setSobrietyDays(days)
+      }
+      
+      // Check for successful payment return
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get('success') === 'true') {
+        setIsPremium(true)
+        localStorage.setItem('recoverylock_premium', 'true')
+        window.history.replaceState({}, '', '/')
       }
     }
   }, [])
@@ -134,6 +148,30 @@ export default function RecoveryLockApp() {
     localStorage.setItem('recoverylock_streak', newStreak.toString())
     
     goToScreen('reflection')
+  }
+
+  // Stripe checkout handler
+  const handleSubscribe = async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceType: selectedPlan }),
+      })
+      
+      const data = await response.json()
+      
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        alert('Error starting checkout. Please try again.')
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      alert('Error starting checkout. Please try again.')
+    }
+    setIsLoading(false)
   }
 
   const weekDays = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa']
@@ -305,7 +343,7 @@ export default function RecoveryLockApp() {
               </div>
             </div>
             
-            <button style={styles.orangeButton} onClick={() => goToScreen('recovery-check')}>
+            <button style={styles.orangeButton} onClick={() => setShowPaywall(true)}>
               Continue
             </button>
             <button style={styles.textButtonLight} onClick={() => goToScreen('streak-intro')}>
@@ -475,18 +513,20 @@ export default function RecoveryLockApp() {
                 </div>
               </div>
               
-              <div style={styles.downloadCTA}>
-                <h3 style={styles.ctaTitle}>Get the full app</h3>
-                <p style={styles.ctaText}>Download Recovery Lock for real app blocking + notifications</p>
-                <div style={styles.storeButtons}>
-                  <button style={styles.storeButton}>
-                    <span>📱</span> Android (Coming Soon)
-                  </button>
-                  <button style={{...styles.storeButton, opacity: 0.6}}>
-                    <span>🍎</span> iOS (Coming Soon)
-                  </button>
+              {!isPremium && (
+                <div style={styles.downloadCTA}>
+                  <h3 style={styles.ctaTitle}>Get the full app</h3>
+                  <p style={styles.ctaText}>Download Recovery Lock for real app blocking + notifications</p>
+                  <div style={styles.storeButtons}>
+                    <button style={styles.storeButton}>
+                      <span>📱</span> Android (Coming Soon)
+                    </button>
+                    <button style={{...styles.storeButton, opacity: 0.6}}>
+                      <span>🍎</span> iOS (Coming Soon)
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
               
               <button 
                 style={styles.secondaryButton} 
@@ -507,6 +547,104 @@ export default function RecoveryLockApp() {
         )}
 
       </div>
+
+      {/* ===== PAYWALL MODAL ===== */}
+      {showPaywall && (
+        <div style={styles.paywallOverlay}>
+          <div style={styles.paywallCard}>
+            <button 
+              style={styles.closeButton}
+              onClick={() => setShowPaywall(false)}
+            >
+              ✕
+            </button>
+            
+            <div style={styles.paywallHeader}>
+              <span style={styles.paywallIcon}>🛡️</span>
+              <h2 style={styles.paywallTitle}>Protect Your Recovery</h2>
+              <p style={styles.paywallSubtitle}>
+                Join thousands protecting their sobriety every day
+              </p>
+            </div>
+            
+            <div style={styles.featureList}>
+              <div style={styles.featureItem}>
+                <span style={styles.featureCheck}>✓</span>
+                <span>Unlimited app blocking</span>
+              </div>
+              <div style={styles.featureItem}>
+                <span style={styles.featureCheck}>✓</span>
+                <span>Personalized AI reflections</span>
+              </div>
+              <div style={styles.featureItem}>
+                <span style={styles.featureCheck}>✓</span>
+                <span>Sobriety streak tracking</span>
+              </div>
+              <div style={styles.featureItem}>
+                <span style={styles.featureCheck}>✓</span>
+                <span>Daily recovery wisdom</span>
+              </div>
+              <div style={styles.featureItem}>
+                <span style={styles.featureCheck}>✓</span>
+                <span>Check-in history & insights</span>
+              </div>
+            </div>
+            
+            <div style={styles.pricingOptions}>
+              <button 
+                style={{
+                  ...styles.pricingCard,
+                  ...(selectedPlan === 'weekly' ? styles.pricingCardSelected : {})
+                }}
+                onClick={() => setSelectedPlan('weekly')}
+              >
+                <span style={styles.pricingPeriod}>Weekly</span>
+                <span style={styles.pricingPrice}>$9.99</span>
+                <span style={styles.pricingNote}>per week</span>
+              </button>
+              
+              <button 
+                style={{
+                  ...styles.pricingCard,
+                  ...styles.pricingCardBest,
+                  ...(selectedPlan === 'yearly' ? styles.pricingCardSelected : {})
+                }}
+                onClick={() => setSelectedPlan('yearly')}
+              >
+                <span style={styles.bestValue}>BEST VALUE</span>
+                <span style={styles.pricingPeriod}>Yearly</span>
+                <span style={styles.pricingPrice}>$49.99</span>
+                <span style={styles.pricingNote}>Save 80%</span>
+              </button>
+            </div>
+            
+            <button 
+              style={{
+                ...styles.subscribeButton,
+                opacity: isLoading ? 0.7 : 1,
+              }}
+              onClick={handleSubscribe}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Loading...' : 'Start 3-Day Free Trial'}
+            </button>
+            
+            <p style={styles.paywallDisclaimer}>
+              No charge until trial ends. Cancel anytime.
+            </p>
+            
+            <button 
+              style={styles.skipButton}
+              onClick={() => {
+                setShowPaywall(false)
+                goToScreen('recovery-check')
+              }}
+            >
+              Try free version first
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -1138,5 +1276,166 @@ const styles = {
     padding: '12px',
     cursor: 'pointer',
     marginTop: '8px',
+  },
+  
+  // Paywall styles
+  paywallOverlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0,0,0,0.85)',
+    backdropFilter: 'blur(8px)',
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: '20px',
+  },
+  paywallCard: {
+    background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)',
+    borderRadius: '32px 32px 0 0',
+    padding: '32px 24px 40px',
+    width: '100%',
+    maxWidth: '440px',
+    maxHeight: '90vh',
+    overflowY: 'auto',
+    position: 'relative',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: '16px',
+    right: '16px',
+    background: 'rgba(255,255,255,0.1)',
+    border: 'none',
+    borderRadius: '50%',
+    width: '40px',
+    height: '40px',
+    color: '#fff',
+    fontSize: '20px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paywallHeader: {
+    textAlign: 'center',
+    marginBottom: '24px',
+  },
+  paywallIcon: {
+    fontSize: '56px',
+    display: 'block',
+    marginBottom: '16px',
+  },
+  paywallTitle: {
+    fontSize: '28px',
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: '8px',
+  },
+  paywallSubtitle: {
+    fontSize: '15px',
+    color: 'rgba(255,255,255,0.6)',
+  },
+  featureList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    marginBottom: '28px',
+  },
+  featureItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: '15px',
+  },
+  featureCheck: {
+    color: '#4CAF50',
+    fontSize: '18px',
+    fontWeight: '700',
+  },
+  pricingOptions: {
+    display: 'flex',
+    gap: '12px',
+    marginBottom: '20px',
+  },
+  pricingCard: {
+    flex: 1,
+    background: 'rgba(255,255,255,0.08)',
+    border: '2px solid rgba(255,255,255,0.15)',
+    borderRadius: '16px',
+    padding: '20px 16px',
+    cursor: 'pointer',
+    textAlign: 'center',
+    position: 'relative',
+    transition: 'all 0.2s ease',
+  },
+  pricingCardBest: {
+    background: 'rgba(255,152,0,0.15)',
+    border: '2px solid rgba(255,152,0,0.4)',
+  },
+  pricingCardSelected: {
+    border: '2px solid #FF9800',
+    background: 'rgba(255,152,0,0.2)',
+    transform: 'scale(1.02)',
+  },
+  bestValue: {
+    position: 'absolute',
+    top: '-12px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: 'linear-gradient(135deg, #FF9800, #FF6B00)',
+    color: '#fff',
+    fontSize: '10px',
+    fontWeight: '700',
+    padding: '4px 12px',
+    borderRadius: '10px',
+    letterSpacing: '0.5px',
+  },
+  pricingPeriod: {
+    display: 'block',
+    fontSize: '14px',
+    color: 'rgba(255,255,255,0.6)',
+    marginBottom: '4px',
+  },
+  pricingPrice: {
+    display: 'block',
+    fontSize: '28px',
+    fontWeight: '800',
+    color: '#fff',
+  },
+  pricingNote: {
+    display: 'block',
+    fontSize: '12px',
+    color: 'rgba(255,255,255,0.5)',
+    marginTop: '4px',
+  },
+  subscribeButton: {
+    background: 'linear-gradient(135deg, #FF9800, #FF6B00)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '16px',
+    padding: '18px 32px',
+    fontSize: '17px',
+    fontWeight: '700',
+    cursor: 'pointer',
+    width: '100%',
+    boxShadow: '0 4px 20px rgba(255,107,0,0.4)',
+    marginBottom: '12px',
+  },
+  paywallDisclaimer: {
+    textAlign: 'center',
+    fontSize: '13px',
+    color: 'rgba(255,255,255,0.4)',
+    marginBottom: '16px',
+  },
+  skipButton: {
+    background: 'transparent',
+    border: 'none',
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: '14px',
+    cursor: 'pointer',
+    width: '100%',
+    padding: '12px',
+    textDecoration: 'underline',
   },
 }
