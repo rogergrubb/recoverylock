@@ -94,12 +94,13 @@ const stepQuotes: { [key: number]: string[] } = {
 };
 
 export default function RecoveryLock() {
-  const [screen, setScreen] = useState<'loading' | 'onboarding' | 'home' | 'checkin-emotion' | 'checkin-craving' | 'generating' | 'reflection' | 'history'>('loading');
+  const [screen, setScreen] = useState<'loading' | 'onboarding' | 'home' | 'checkin-emotion' | 'checkin-craving' | 'checkin-feelings' | 'generating' | 'reflection' | 'history'>('loading');
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [profile, setProfile] = useState<UserProfile>({ name: '', sobrietyDate: '', motivation: '', onboardingComplete: false });
   const [history, setHistory] = useState<CheckInEntry[]>([]);
   const [emotionalState, setEmotionalState] = useState(2);
   const [cravingLevel, setCravingLevel] = useState(1);
+  const [feelingsText, setFeelingsText] = useState('');
   const [currentReflection, setCurrentReflection] = useState<CheckInEntry | null>(null);
   const [currentStep, setCurrentStep] = useState(twelveSteps[0]);
   const [dailyQuote, setDailyQuote] = useState('');
@@ -162,6 +163,7 @@ export default function RecoveryLock() {
           motivation: profile.motivation,
           emotionalState,
           cravingLevel,
+          feelingsText,
           checkInCount: history.length + 1
         })
       });
@@ -504,11 +506,57 @@ export default function RecoveryLock() {
         </div>
         
         <button
-          onClick={generateReflection}
+          onClick={() => setScreen('checkin-feelings')}
           className="w-full max-w-xs bg-white text-blue-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
         >
-          Get My Reflection
+          Continue
         </button>
+      </div>
+    );
+  }
+
+  // Check-in: Free-text feelings description
+  if (screen === 'checkin-feelings') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-500 to-violet-600 flex flex-col items-center justify-center p-6 text-white">
+        <button
+          onClick={() => setScreen('checkin-craving')}
+          className="absolute top-6 left-6 text-white/80 active:scale-95 transition"
+        >
+          ← Back
+        </button>
+        
+        <div className="text-6xl mb-6">💭</div>
+        <h2 className="text-2xl font-bold mb-2">What's on your mind?</h2>
+        <p className="text-white/70 mb-6 text-center px-4">Share what you're going through right now. This helps personalize your reflection.</p>
+        
+        <textarea
+          value={feelingsText}
+          onChange={(e) => setFeelingsText(e.target.value)}
+          placeholder="I'm feeling anxious about a work meeting... I'm grateful for my family's support... I'm struggling with loneliness today..."
+          rows={4}
+          className="w-full max-w-xs bg-white/15 border border-white/30 rounded-2xl px-4 py-4 text-lg mb-6 placeholder-white/40 resize-none focus:outline-none focus:border-white/60 transition"
+        />
+        
+        <p className="text-white/50 text-sm mb-6">Optional - skip if you prefer</p>
+        
+        <div className="w-full max-w-xs space-y-3">
+          <button
+            onClick={generateReflection}
+            className="w-full bg-white text-purple-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+          >
+            Get My Reflection
+          </button>
+          <button
+            onClick={() => {
+              setFeelingsText('');
+              generateReflection();
+            }}
+            className="w-full bg-white/20 text-white font-medium py-3 rounded-full text-base active:scale-95 transition"
+          >
+            Skip
+          </button>
+        </div>
       </div>
     );
   }
@@ -553,6 +601,7 @@ export default function RecoveryLock() {
             onClick={() => {
               setEmotionalState(2);
               setCravingLevel(1);
+              setFeelingsText('');
               setScreen('checkin-emotion');
             }}
             className="w-full bg-white/20 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
