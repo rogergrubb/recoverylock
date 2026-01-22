@@ -10,6 +10,16 @@ interface UserProfile {
   onboardingComplete: boolean;
   recoveryProgram: string;  // AA, NA, CA, GA, OA, SA, ACA, Al-Anon, other
   primaryChallenge: string; // User's self-described challenge/pattern
+  email?: string; // For subscription tracking
+  trialStartDate?: string; // When free trial began
+}
+
+interface SubscriptionStatus {
+  active: boolean;
+  status: 'none' | 'trialing' | 'active' | 'past_due' | 'canceled';
+  trialEnd?: number;
+  currentPeriodEnd?: number;
+  customerId?: string;
 }
 
 interface CheckInEntry {
@@ -20,6 +30,26 @@ interface CheckInEntry {
   reflection: string;
   title: string;
   source: string;
+}
+
+// Free trial duration in days
+const FREE_TRIAL_DAYS = 7;
+
+// Check if user is in free trial period (local, before Stripe)
+function isInFreeTrial(trialStartDate?: string): boolean {
+  if (!trialStartDate) return true; // New user, hasn't started trial yet
+  const start = new Date(trialStartDate);
+  const now = new Date();
+  const daysSinceStart = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  return daysSinceStart < FREE_TRIAL_DAYS;
+}
+
+function getDaysLeftInTrial(trialStartDate?: string): number {
+  if (!trialStartDate) return FREE_TRIAL_DAYS;
+  const start = new Date(trialStartDate);
+  const now = new Date();
+  const daysSinceStart = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.max(0, FREE_TRIAL_DAYS - daysSinceStart);
 }
 
 // Calculate days sober
@@ -96,7 +126,7 @@ const stepQuotes: { [key: number]: string[] } = {
 };
 
 export default function RecoveryLock() {
-  const [screen, setScreen] = useState<'loading' | 'onboarding' | 'home' | 'checkin-emotion' | 'checkin-craving' | 'checkin-feelings' | 'generating' | 'reflection' | 'history'>('loading');
+  const [screen, setScreen] = useState<'loading' | 'onboarding' | 'home' | 'checkin-emotion' | 'checkin-craving' | 'checkin-feelings' | 'generating' | 'reflection' | 'history' | 'paywall'>('loading');
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [profile, setProfile] = useState<UserProfile>({ name: '', sobrietyDate: '', motivation: '', onboardingComplete: false, recoveryProgram: '', primaryChallenge: '' });
   const [history, setHistory] = useState<CheckInEntry[]>([]);
@@ -106,6 +136,52 @@ export default function RecoveryLock() {
   const [currentReflection, setCurrentReflection] = useState<CheckInEntry | null>(null);
   const [currentStep, setCurrentStep] = useState(twelveSteps[0]);
   const [dailyQuote, setDailyQuote] = useState('');
+  const [subscription, setSubscription] = useState<SubscriptionStatus>({ active: false, status: 'none' });
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
+
+  // Check subscription status
+  const checkSubscription = async (email?: string, sessionId?: string) => {
+    try {
+      const response = await fetch('/api/stripe/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, sessionId })
+      });
+      const data = await response.json();
+      setSubscription(data);
+      return data;
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+      return { active: false, status: 'none' };
+    }
+  };
+
+  // Handle checkout
+  const handleCheckout = async (plan: 'monthly' | 'yearly') => {
+    setIsCheckingSubscription(true);
+    try {
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan, email: profile.email })
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+    }
+    setIsCheckingSubscription(false);
+  };
+
+  // Check if user has access (free trial or active subscription)
+  const hasAccess = () => {
+    // If subscription is active or trialing via Stripe, they have access
+    if (subscription.active) return true;
+    // Otherwise check local free trial
+    return isInFreeTrial(profile.trialStartDate);
+  };
 
   // Load profile and history from localStorage
   useEffect(() => {
@@ -121,12 +197,44 @@ export default function RecoveryLock() {
     const quotes = stepQuotes[month + 1];
     const quoteIndex = dayOfMonth % quotes.length;
     setDailyQuote(quotes[quoteIndex]);
+
+    // Check URL params for successful checkout
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    const success = urlParams.get('success');
     
+    // Initialize profile
+    let currentProfile: UserProfile | null = null;
     if (savedProfile) {
-      const parsed = JSON.parse(savedProfile);
-      setProfile(parsed);
-      if (parsed.onboardingComplete) {
-        setScreen('home');
+      currentProfile = JSON.parse(savedProfile) as UserProfile;
+      setProfile(currentProfile);
+    }
+    
+    // If coming back from successful checkout, verify subscription
+    if (success === 'true' && sessionId) {
+      checkSubscription(currentProfile?.email, sessionId).then(() => {
+        // Clear URL params
+        window.history.replaceState({}, '', '/');
+        
+        if (currentProfile?.onboardingComplete) {
+          setScreen('home');
+        } else {
+          setScreen('onboarding');
+        }
+      });
+    } else if (currentProfile) {
+      // Check subscription status if user has email
+      if (currentProfile.email) {
+        checkSubscription(currentProfile.email);
+      }
+      
+      if (currentProfile.onboardingComplete) {
+        // Check if they have access before showing home
+        if (isInFreeTrial(currentProfile.trialStartDate)) {
+          setScreen('home');
+        } else {
+          setScreen('paywall');
+        }
       } else {
         setScreen('onboarding');
       }
@@ -391,7 +499,11 @@ export default function RecoveryLock() {
         />
         <button
           onClick={() => {
-            const completeProfile = { ...profile, onboardingComplete: true };
+            const completeProfile = { 
+              ...profile, 
+              onboardingComplete: true,
+              trialStartDate: new Date().toISOString() // Start free trial
+            };
             saveProfile(completeProfile);
             setOnboardingStep(7);
           }}
@@ -404,7 +516,7 @@ export default function RecoveryLock() {
       // Ready
       <div key="ready" className="min-h-screen bg-gradient-to-b from-green-500 to-green-600 flex flex-col items-center justify-center p-6 text-white">
         <div className="text-7xl mb-6">✨</div>
-        <h2 className="text-3xl font-bold mb-4">You're all set, {profile.name}!</h2>
+        <h2 className="text-3xl font-bold mb-4">You&apos;re all set, {profile.name}!</h2>
         <p className="text-lg opacity-90 mb-8 text-center">
           {getDaysSober(profile.sobrietyDate)} days of recovery and counting.
           <br />Every check-in makes you stronger.
@@ -427,14 +539,38 @@ export default function RecoveryLock() {
     const streak = getStreak(history);
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+    const daysLeftInTrial = getDaysLeftInTrial(profile.trialStartDate);
+    const showTrialBanner = !subscription.active && daysLeftInTrial <= 3 && daysLeftInTrial > 0;
     
     return (
       <div style={{ minHeight: '100vh', background: '#FFF7ED', display: 'flex', flexDirection: 'column' }}>
+        {/* Trial banner */}
+        {showTrialBanner && (
+          <div 
+            onClick={() => setScreen('paywall')}
+            style={{
+              background: 'linear-gradient(90deg, #f59e0b 0%, #d97706 100%)',
+              padding: '12px 24px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              cursor: 'pointer'
+            }}
+          >
+            <span style={{ color: 'white', fontSize: '14px', fontWeight: '500' }}>
+              ⏰ {daysLeftInTrial} day{daysLeftInTrial !== 1 ? 's' : ''} left in your free trial
+            </span>
+            <span style={{ color: 'white', fontSize: '13px', opacity: 0.9 }}>
+              Upgrade →
+            </span>
+          </div>
+        )}
+        
         {/* Header */}
         <div style={{
           background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
           padding: '48px 24px 32px 24px',
-          borderRadius: '0 0 32px 32px',
+          borderRadius: showTrialBanner ? '0' : '0 0 32px 32px',
           boxShadow: '0 4px 20px rgba(234, 88, 12, 0.3)'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
@@ -1009,6 +1145,152 @@ export default function RecoveryLock() {
             ))
           )}
         </div>
+      </div>
+    );
+  }
+
+  // Paywall screen
+  if (screen === 'paywall') {
+    const daysLeft = getDaysLeftInTrial(profile.trialStartDate);
+    
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #1c1917, #292524)',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '24px',
+        color: 'white'
+      }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ fontSize: '64px', marginBottom: '24px' }}>🔒</div>
+          
+          {daysLeft > 0 ? (
+            <>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
+                {daysLeft} Day{daysLeft !== 1 ? 's' : ''} Left in Your Free Trial
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '32px', textAlign: 'center', maxWidth: '300px' }}>
+                Subscribe now to continue your recovery journey without interruption.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
+                Your Free Trial Has Ended
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '32px', textAlign: 'center', maxWidth: '300px' }}>
+                Subscribe to continue using Recovery Lock and strengthen your recovery.
+              </p>
+            </>
+          )}
+
+          {/* Pricing cards */}
+          <div style={{ width: '100%', maxWidth: '340px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {/* Monthly */}
+            <button
+              onClick={() => handleCheckout('monthly')}
+              disabled={isCheckingSubscription}
+              style={{
+                background: 'rgba(255,255,255,0.1)',
+                border: '2px solid rgba(255,255,255,0.2)',
+                borderRadius: '16px',
+                padding: '20px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                opacity: isCheckingSubscription ? 0.6 : 1
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ color: 'white', fontWeight: '600', fontSize: '18px' }}>Monthly</span>
+                <span style={{ color: '#f97316', fontWeight: 'bold', fontSize: '20px' }}>$4.99<span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>/mo</span></span>
+              </div>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', margin: 0 }}>
+                Cancel anytime
+              </p>
+            </button>
+
+            {/* Yearly - Best value */}
+            <button
+              onClick={() => handleCheckout('yearly')}
+              disabled={isCheckingSubscription}
+              style={{
+                background: 'linear-gradient(135deg, rgba(249,115,22,0.2) 0%, rgba(234,88,12,0.2) 100%)',
+                border: '2px solid #f97316',
+                borderRadius: '16px',
+                padding: '20px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                position: 'relative',
+                opacity: isCheckingSubscription ? 0.6 : 1
+              }}
+            >
+              <div style={{
+                position: 'absolute',
+                top: '-12px',
+                right: '16px',
+                background: '#f97316',
+                color: 'white',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                padding: '4px 12px',
+                borderRadius: '12px'
+              }}>
+                SAVE 50%
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ color: 'white', fontWeight: '600', fontSize: '18px' }}>Yearly</span>
+                <span style={{ color: '#f97316', fontWeight: 'bold', fontSize: '20px' }}>$29.99<span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>/yr</span></span>
+              </div>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', margin: 0 }}>
+                Just $2.50/month • Best value
+              </p>
+            </button>
+          </div>
+
+          {/* Features */}
+          <div style={{ marginTop: '32px', width: '100%', maxWidth: '340px' }}>
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', textAlign: 'center', marginBottom: '16px' }}>
+              What you get:
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[
+                '✨ Unlimited AI-powered reflections',
+                '📊 Track your recovery journey',
+                '🎯 Personalized 12-step wisdom',
+                '🔥 Streak tracking & motivation',
+                '💝 Support the recovery community'
+              ].map((feature, i) => (
+                <div key={i} style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px' }}>
+                  {feature}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Continue with trial (if days left) */}
+        {daysLeft > 0 && (
+          <button
+            onClick={() => setScreen('home')}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '14px',
+              padding: '16px',
+              cursor: 'pointer',
+              marginTop: '16px'
+            }}
+          >
+            Continue with free trial ({daysLeft} day{daysLeft !== 1 ? 's' : ''} left)
+          </button>
+        )}
+
+        {/* Terms */}
+        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '11px', textAlign: 'center', marginTop: '16px' }}>
+          7-day free trial, then billed automatically. Cancel anytime.
+        </p>
       </div>
     );
   }
