@@ -339,49 +339,70 @@ export default function RecoveryLock() {
 
   // Onboarding - Story-driven commitment ceremony
   if (screen === 'onboarding') {
+    // Shared styles
+    const screenStyle: React.CSSProperties = {
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
+      color: 'white'
+    };
+    const buttonStyle: React.CSSProperties = {
+      width: '100%',
+      maxWidth: '320px',
+      fontWeight: '600',
+      padding: '16px',
+      borderRadius: '9999px',
+      fontSize: '18px',
+      border: 'none',
+      cursor: 'pointer'
+    };
+
     const screens = [
       // 0. Opening - Dramatic hook
-      <div key="hook" className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-6xl mb-8 opacity-80">📱</div>
-        <h1 className="text-3xl font-bold mb-6 text-center leading-tight">
+      <div key="hook" style={{ ...screenStyle, background: '#000' }}>
+        <div style={{ fontSize: '64px', marginBottom: '32px', opacity: 0.8 }}>📱</div>
+        <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', lineHeight: 1.2 }}>
           Your phone knows your secrets.
         </h1>
-        <p className="text-lg text-white/60 mb-12 text-center max-w-xs">
+        <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.6)', marginBottom: '48px', textAlign: 'center', maxWidth: '320px' }}>
           It knows when you&apos;re vulnerable. When you&apos;re bored. When you&apos;re lonely.
         </p>
         <button
           onClick={() => setOnboardingStep(1)}
-          className="w-full max-w-xs bg-white text-black font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: 'white', color: 'black' }}
         >
           Continue
         </button>
       </div>,
 
       // 1. The problem deepens
-      <div key="problem" className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-white">
-        <h2 className="text-2xl font-bold mb-6 text-center">
+      <div key="problem" style={{ ...screenStyle, background: '#000' }}>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center' }}>
           And it uses that against you.
         </h2>
-        <div className="space-y-4 mb-8 max-w-xs">
-          <p className="text-white/70 text-center">Every notification. Every scroll. Every distraction.</p>
-          <p className="text-white/70 text-center">Designed to pull you away from what matters.</p>
-          <p className="text-white/70 text-center">Away from your recovery.</p>
+        <div style={{ marginBottom: '32px', maxWidth: '320px' }}>
+          <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', marginBottom: '16px' }}>Every notification. Every scroll. Every distraction.</p>
+          <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', marginBottom: '16px' }}>Designed to pull you away from what matters.</p>
+          <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>Away from your recovery.</p>
         </div>
         <button
           onClick={() => setOnboardingStep(2)}
-          className="w-full max-w-xs bg-white/10 border border-white/30 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.3)' }}
         >
           I know the feeling
         </button>
       </div>,
 
       // 2. Statistics - emotional impact
-      <div key="stats" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <p className="text-white/50 text-sm mb-4">THE AVERAGE PERSON</p>
-        <div className="text-7xl font-bold text-orange-500 mb-2">96</div>
-        <p className="text-xl mb-8">phone pickups per day</p>
-        <div className="bg-white/5 rounded-2xl p-6 max-w-xs mb-8">
-          <p className="text-white/70 text-center text-sm leading-relaxed">
+      <div key="stats" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '16px', letterSpacing: '1px' }}>THE AVERAGE PERSON</p>
+        <div style={{ fontSize: '80px', fontWeight: 'bold', color: '#f97316', marginBottom: '8px' }}>96</div>
+        <p style={{ fontSize: '22px', marginBottom: '32px' }}>phone pickups per day</p>
+        <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', maxWidth: '320px', marginBottom: '32px' }}>
+          <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', fontSize: '15px', lineHeight: 1.6 }}>
             That&apos;s 96 moments where your addiction whispers.<br/>
             96 chances to slip.<br/>
             96 times you could choose differently.
@@ -389,148 +410,160 @@ export default function RecoveryLock() {
         </div>
         <button
           onClick={() => setOnboardingStep(3)}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           What if I could change that?
         </button>
       </div>,
 
       // 3. The vision / transformation
-      <div key="vision" className="min-h-screen bg-gradient-to-b from-orange-600 to-orange-700 flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-6xl mb-6">✨</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      <div key="vision" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #ea580c, #c2410c)' }}>
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>✨</div>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           What if every unlock<br/>strengthened your recovery?
         </h2>
-        <div className="space-y-3 mb-8 max-w-xs">
-          <p className="text-white/90 text-center">A moment to pause.</p>
-          <p className="text-white/90 text-center">A moment to breathe.</p>
-          <p className="text-white/90 text-center">A moment to remember who you&apos;re becoming.</p>
+        <div style={{ marginBottom: '32px', maxWidth: '320px' }}>
+          <p style={{ color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: '12px' }}>A moment to pause.</p>
+          <p style={{ color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: '12px' }}>A moment to breathe.</p>
+          <p style={{ color: 'rgba(255,255,255,0.9)', textAlign: 'center' }}>A moment to remember who you&apos;re becoming.</p>
         </div>
         <button
           onClick={() => setOnboardingStep(4)}
-          className="w-full max-w-xs bg-white text-orange-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: 'white', color: '#ea580c', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
         >
           Show me how
         </button>
       </div>,
 
-      // 4. How it works - simple
-      <div key="how1" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <p className="text-orange-500 text-sm font-semibold mb-4">HOW IT WORKS</p>
-        <div className="text-6xl mb-6">1️⃣</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      // 4. How it works - step 1
+      <div key="how1" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '16px', letterSpacing: '1px' }}>HOW IT WORKS</p>
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>1️⃣</div>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           You reach for your phone
         </h2>
-        <p className="text-white/60 text-center max-w-xs mb-8">
+        <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
           The same automatic gesture. The same habitual reach. But this time, something different happens.
         </p>
         <button
           onClick={() => setOnboardingStep(5)}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           Next
         </button>
       </div>,
 
       // 5. How it works - step 2
-      <div key="how2" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <p className="text-orange-500 text-sm font-semibold mb-4">HOW IT WORKS</p>
-        <div className="text-6xl mb-6">2️⃣</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      <div key="how2" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '16px', letterSpacing: '1px' }}>HOW IT WORKS</p>
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>2️⃣</div>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           Recovery Lock asks:<br/>&quot;How are you feeling?&quot;
         </h2>
-        <p className="text-white/60 text-center max-w-xs mb-8">
+        <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
           A simple check-in. Your emotional state. Your craving level. Just honest awareness.
         </p>
         <button
           onClick={() => setOnboardingStep(6)}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           Next
         </button>
       </div>,
 
       // 6. How it works - step 3
-      <div key="how3" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <p className="text-orange-500 text-sm font-semibold mb-4">HOW IT WORKS</p>
-        <div className="text-6xl mb-6">3️⃣</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      <div key="how3" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '16px', letterSpacing: '1px' }}>HOW IT WORKS</p>
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>3️⃣</div>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           You receive a personalized reflection
         </h2>
-        <p className="text-white/60 text-center max-w-xs mb-8">
+        <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
           Wisdom from the 12 steps. Crafted for exactly where you are in this moment. A gentle reminder of your strength.
         </p>
         <button
           onClick={() => setOnboardingStep(7)}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           Next
         </button>
       </div>,
 
       // 7. How it works - result
-      <div key="how4" className="min-h-screen bg-gradient-to-b from-green-600 to-emerald-700 flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-6xl mb-6">🔓</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      <div key="how4" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #16a34a, #15803d)' }}>
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>🔓</div>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           Then you continue,<br/>centered and present.
         </h2>
-        <p className="text-white/80 text-center max-w-xs mb-8">
+        <p style={{ color: 'rgba(255,255,255,0.8)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
           Not from avoidance. From awareness. Every unlock becomes a victory. Every day, you get stronger.
         </p>
         <button
           onClick={() => setOnboardingStep(8)}
-          className="w-full max-w-xs bg-white text-green-700 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: 'white', color: '#15803d', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
         >
           I&apos;m ready to begin
         </button>
       </div>,
 
       // 8. Transition to personalization
-      <div key="personalize-intro" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-5xl mb-6">🤝</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      <div key="personalize-intro" style={{ ...screenStyle, background: '#1c1917' }}>
+        <div style={{ fontSize: '56px', marginBottom: '24px' }}>🤝</div>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           Let&apos;s make this yours.
         </h2>
-        <p className="text-white/60 text-center max-w-xs mb-8">
+        <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
           A few questions to personalize your recovery experience. Everything stays private on your device.
         </p>
         <button
           onClick={() => setOnboardingStep(9)}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           Let&apos;s do it
         </button>
       </div>,
 
       // 9. Name - warm and personal
-      <div key="name" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 1 OF 5</p>
-        <h2 className="text-2xl font-bold mb-2">What&apos;s your name?</h2>
-        <p className="text-white/50 mb-8 text-center">So we can make this personal</p>
+      <div key="name" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>STEP 1 OF 5</p>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '8px' }}>What&apos;s your name?</h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '32px', textAlign: 'center' }}>So we can make this personal</p>
         <input
           type="text"
           value={profile.name}
           onChange={(e) => setProfile({ ...profile, name: e.target.value })}
           placeholder="Your first name"
-          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-xl text-center mb-8 placeholder-white/40 focus:outline-none focus:border-orange-500"
+          style={{
+            width: '100%',
+            maxWidth: '320px',
+            background: 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+            fontSize: '20px',
+            textAlign: 'center',
+            marginBottom: '32px',
+            color: 'white',
+            outline: 'none'
+          }}
           autoFocus
         />
         <button
           onClick={() => profile.name && setOnboardingStep(10)}
           disabled={!profile.name}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
+          style={{ ...buttonStyle, background: profile.name ? '#f97316' : 'rgba(249,115,22,0.5)', color: 'white' }}
         >
           Continue
         </button>
       </div>,
 
       // 10. Recovery program
-      <div key="program" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 2 OF 5</p>
-        <h2 className="text-xl font-bold mb-2 text-center">What fellowship speaks to you, {profile.name}?</h2>
-        <p className="text-white/50 mb-4 text-center text-sm">This helps us tailor your reflections</p>
+      <div key="program" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>STEP 2 OF 5</p>
+        <h2 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>What fellowship speaks to you, {profile.name}?</h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '16px', textAlign: 'center', fontSize: '14px' }}>This helps us tailor your reflections</p>
         
-        <div className="w-full max-w-xs space-y-2 mb-6 max-h-72 overflow-y-auto">
+        <div style={{ width: '100%', maxWidth: '320px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px', maxHeight: '300px', overflowY: 'auto' }}>
           {[
             { id: 'AA', label: 'Alcoholics Anonymous (AA)', emoji: '🍷' },
             { id: 'NA', label: 'Narcotics Anonymous (NA)', emoji: '💊' },
@@ -547,14 +580,22 @@ export default function RecoveryLock() {
             <button
               key={program.id}
               onClick={() => setProfile({ ...profile, recoveryProgram: program.id })}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition text-left ${
-                profile.recoveryProgram === program.id
-                  ? 'bg-orange-500/20 border-orange-500 text-white'
-                  : 'bg-white/5 border-white/10 text-white/80'
-              }`}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                borderRadius: '12px',
+                border: profile.recoveryProgram === program.id ? '1px solid #f97316' : '1px solid rgba(255,255,255,0.1)',
+                background: profile.recoveryProgram === program.id ? 'rgba(249,115,22,0.2)' : 'rgba(255,255,255,0.05)',
+                color: 'white',
+                textAlign: 'left',
+                cursor: 'pointer'
+              }}
             >
-              <span className="text-xl">{program.emoji}</span>
-              <span className="text-sm">{program.label}</span>
+              <span style={{ fontSize: '20px' }}>{program.emoji}</span>
+              <span style={{ fontSize: '14px' }}>{program.label}</span>
             </button>
           ))}
         </div>
@@ -562,17 +603,17 @@ export default function RecoveryLock() {
         <button
           onClick={() => profile.recoveryProgram && setOnboardingStep(11)}
           disabled={!profile.recoveryProgram}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
+          style={{ ...buttonStyle, background: profile.recoveryProgram ? '#f97316' : 'rgba(249,115,22,0.5)', color: 'white' }}
         >
           Continue
         </button>
       </div>,
 
       // 11. Personal challenge - deeper
-      <div key="challenge" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 3 OF 5</p>
-        <h2 className="text-xl font-bold mb-2 text-center">What are you working through?</h2>
-        <p className="text-white/50 mb-6 text-center text-sm px-4">
+      <div key="challenge" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>STEP 3 OF 5</p>
+        <h2 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>What are you working through?</h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '24px', textAlign: 'center', fontSize: '14px' }}>
           In your own words. This helps us understand your journey.
         </p>
         
@@ -581,47 +622,72 @@ export default function RecoveryLock() {
           onChange={(e) => setProfile({ ...profile, primaryChallenge: e.target.value })}
           placeholder="I'm working on..."
           rows={4}
-          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-base mb-4 placeholder-white/40 resize-none focus:outline-none focus:border-orange-500"
+          style={{
+            width: '100%',
+            maxWidth: '320px',
+            background: 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+            fontSize: '16px',
+            marginBottom: '16px',
+            color: 'white',
+            resize: 'none',
+            outline: 'none'
+          }}
         />
         
-        <p className="text-white/30 text-xs mb-6 text-center">
+        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', marginBottom: '24px', textAlign: 'center' }}>
           🔒 Stored only on your device. Never shared.
         </p>
         
         <button
           onClick={() => setOnboardingStep(12)}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           {profile.primaryChallenge ? 'Continue' : 'Skip for now'}
         </button>
       </div>,
 
       // 12. Sobriety date - milestone focused
-      <div key="date" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 4 OF 5</p>
-        <h2 className="text-xl font-bold mb-2 text-center">When did your recovery journey begin?</h2>
-        <p className="text-white/50 mb-8 text-center text-sm">This can be your sobriety date, or when you committed to change</p>
+      <div key="date" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>STEP 4 OF 5</p>
+        <h2 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>When did your recovery journey begin?</h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '32px', textAlign: 'center', fontSize: '14px' }}>This can be your sobriety date, or when you committed to change</p>
         <input
           type="date"
           value={profile.sobrietyDate}
           onChange={(e) => setProfile({ ...profile, sobrietyDate: e.target.value })}
           max={new Date().toISOString().split('T')[0]}
-          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-lg text-center mb-8 text-white focus:outline-none focus:border-orange-500 [color-scheme:dark]"
+          style={{
+            width: '100%',
+            maxWidth: '320px',
+            background: 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+            fontSize: '18px',
+            textAlign: 'center',
+            marginBottom: '32px',
+            color: 'white',
+            colorScheme: 'dark',
+            outline: 'none'
+          }}
         />
         <button
           onClick={() => profile.sobrietyDate && setOnboardingStep(13)}
           disabled={!profile.sobrietyDate}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
+          style={{ ...buttonStyle, background: profile.sobrietyDate ? '#f97316' : 'rgba(249,115,22,0.5)', color: 'white' }}
         >
           Continue
         </button>
       </div>,
 
       // 13. Why - the deep motivation
-      <div key="why" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 5 OF 5</p>
-        <h2 className="text-xl font-bold mb-2 text-center">Why does recovery matter to you?</h2>
-        <p className="text-white/50 mb-6 text-center text-sm">
+      <div key="why" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>STEP 5 OF 5</p>
+        <h2 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>Why does recovery matter to you?</h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '24px', textAlign: 'center', fontSize: '14px' }}>
           This is your anchor. We&apos;ll remind you of it when things get hard.
         </p>
         <textarea
@@ -629,28 +695,40 @@ export default function RecoveryLock() {
           onChange={(e) => setProfile({ ...profile, motivation: e.target.value })}
           placeholder="I'm doing this because..."
           rows={4}
-          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-base mb-8 placeholder-white/40 resize-none focus:outline-none focus:border-orange-500"
+          style={{
+            width: '100%',
+            maxWidth: '320px',
+            background: 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+            fontSize: '16px',
+            marginBottom: '32px',
+            color: 'white',
+            resize: 'none',
+            outline: 'none'
+          }}
         />
         <button
           onClick={() => setOnboardingStep(14)}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           {profile.motivation ? 'Continue' : 'Skip for now'}
         </button>
       </div>,
 
       // 14. First experience - live demo check-in
-      <div key="demo-intro" className="min-h-screen bg-gradient-to-b from-orange-500 to-orange-600 flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-6xl mb-6">🎯</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      <div key="demo-intro" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #f97316, #ea580c)' }}>
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>🎯</div>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           Let&apos;s try your first check-in together.
         </h2>
-        <p className="text-white/80 text-center max-w-xs mb-8">
+        <p style={{ color: 'rgba(255,255,255,0.8)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
           This is what you&apos;ll experience every time you open a blocked app. Takes about 30 seconds.
         </p>
         <button
           onClick={() => setOnboardingStep(15)}
-          className="w-full max-w-xs bg-white text-orange-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: 'white', color: '#ea580c', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
         >
           Try it now
         </button>
@@ -785,15 +863,15 @@ export default function RecoveryLock() {
       </div>,
 
       // 18. Ask for review - EMOTIONAL PEAK (8-10 min mark)
-      <div key="review-ask" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-6xl mb-6">⭐</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      <div key="review-ask" style={{ ...screenStyle, background: '#1c1917' }}>
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>⭐</div>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           You just completed your first check-in!
         </h2>
-        <p className="text-white/70 text-center max-w-xs mb-8">
+        <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
           If this resonated with you, would you take 10 seconds to rate us? It helps others in recovery find this tool.
         </p>
-        <div className="flex gap-2 mb-8">
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
           {[1,2,3,4,5].map((star) => (
             <button
               key={star}
@@ -801,7 +879,7 @@ export default function RecoveryLock() {
                 // In a real app, this would trigger the native review prompt
                 setOnboardingStep(19);
               }}
-              className="text-4xl hover:scale-110 transition"
+              style={{ fontSize: '36px', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               ⭐
             </button>
@@ -809,45 +887,45 @@ export default function RecoveryLock() {
         </div>
         <button
           onClick={() => setOnboardingStep(19)}
-          className="text-white/50 text-sm"
+          style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', cursor: 'pointer' }}
         >
           Maybe later
         </button>
       </div>,
 
       // 19. Commitment ceremony intro
-      <div key="commitment-intro" className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-5xl mb-6">🕯️</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      <div key="commitment-intro" style={{ ...screenStyle, background: '#000' }}>
+        <div style={{ fontSize: '56px', marginBottom: '24px' }}>🕯️</div>
+        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           One last thing, {profile.name}.
         </h2>
-        <p className="text-white/70 text-center max-w-xs mb-8">
+        <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
           Recovery isn&apos;t just about stopping something. It&apos;s about becoming someone. Let&apos;s make a commitment together.
         </p>
         <button
           onClick={() => setOnboardingStep(20)}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           I&apos;m ready
         </button>
       </div>,
 
       // 20. The Commitment - sacred moment
-      <div key="commitment" className="min-h-screen bg-gradient-to-b from-[#1c1917] to-[#292524] flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-4xl mb-8">🔥</div>
-        <p className="text-orange-500 text-sm font-semibold mb-6 tracking-widest">MY COMMITMENT</p>
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 max-w-sm mb-8">
-          <p className="text-lg text-center leading-relaxed">
-            I, <span className="text-orange-400 font-semibold">{profile.name}</span>, commit to showing up for my recovery.
+      <div key="commitment" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #1c1917, #292524)' }}>
+        <div style={{ fontSize: '48px', marginBottom: '32px' }}>🔥</div>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '24px', letterSpacing: '3px' }}>MY COMMITMENT</p>
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '24px', maxWidth: '340px', marginBottom: '32px' }}>
+          <p style={{ fontSize: '18px', textAlign: 'center', lineHeight: 1.6 }}>
+            I, <span style={{ color: '#fb923c', fontWeight: '600' }}>{profile.name}</span>, commit to showing up for my recovery.
           </p>
-          <p className="text-lg text-center leading-relaxed mt-4">
+          <p style={{ fontSize: '18px', textAlign: 'center', lineHeight: 1.6, marginTop: '16px' }}>
             Not perfectly. Not fearlessly. But honestly.
           </p>
-          <p className="text-lg text-center leading-relaxed mt-4">
+          <p style={{ fontSize: '18px', textAlign: 'center', lineHeight: 1.6, marginTop: '16px' }}>
             One check-in at a time. One day at a time.
           </p>
           {profile.motivation && (
-            <p className="text-white/60 text-center mt-6 text-sm italic">
+            <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginTop: '24px', fontSize: '14px', fontStyle: 'italic' }}>
               Because: &quot;{profile.motivation}&quot;
             </p>
           )}
@@ -862,30 +940,30 @@ export default function RecoveryLock() {
             saveProfile(completeProfile);
             setOnboardingStep(21);
           }}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           I commit to this
         </button>
       </div>,
 
       // 21. Celebration / Welcome
-      <div key="welcome-final" className="min-h-screen bg-gradient-to-b from-green-500 to-emerald-600 flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-7xl mb-6">🎉</div>
-        <h2 className="text-3xl font-bold mb-4 text-center">
+      <div key="welcome-final" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #22c55e, #059669)' }}>
+        <div style={{ fontSize: '80px', marginBottom: '24px' }}>🎉</div>
+        <h2 style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           Welcome to Recovery Lock, {profile.name}
         </h2>
-        <div className="bg-white/20 backdrop-blur rounded-2xl p-6 max-w-xs mb-8">
-          <div className="text-center">
-            <p className="text-5xl font-bold">{getDaysSober(profile.sobrietyDate)}</p>
-            <p className="text-white/80 mt-1">days in recovery</p>
+        <div style={{ background: 'rgba(255,255,255,0.2)', borderRadius: '16px', padding: '24px', maxWidth: '320px', marginBottom: '32px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontSize: '56px', fontWeight: 'bold' }}>{getDaysSober(profile.sobrietyDate)}</p>
+            <p style={{ color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>days in recovery</p>
           </div>
         </div>
-        <p className="text-white/80 text-center max-w-xs mb-8">
+        <p style={{ color: 'rgba(255,255,255,0.8)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
           Every day you&apos;ve chosen recovery is a victory. Let&apos;s keep building on that.
         </p>
         <button
           onClick={() => setScreen('home')}
-          className="w-full max-w-xs bg-white text-green-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+          style={{ ...buttonStyle, background: 'white', color: '#16a34a', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
         >
           Begin my journey
         </button>
