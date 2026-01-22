@@ -138,6 +138,8 @@ export default function RecoveryLock() {
   const [dailyQuote, setDailyQuote] = useState('');
   const [subscription, setSubscription] = useState<SubscriptionStatus>({ active: false, status: 'none' });
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [showReviewThanks, setShowReviewThanks] = useState(false);
 
   // Check subscription status
   const checkSubscription = async (email?: string, sessionId?: string) => {
@@ -864,33 +866,62 @@ export default function RecoveryLock() {
 
       // 18. Ask for review - EMOTIONAL PEAK (8-10 min mark)
       <div key="review-ask" style={{ ...screenStyle, background: '#1c1917' }}>
-        <div style={{ fontSize: '64px', marginBottom: '24px' }}>⭐</div>
-        <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
-          You just completed your first check-in!
-        </h2>
-        <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
-          If this resonated with you, would you take 10 seconds to rate us? It helps others in recovery find this tool.
-        </p>
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
-          {[1,2,3,4,5].map((star) => (
+        {!showReviewThanks ? (
+          <>
+            <div style={{ fontSize: '64px', marginBottom: '24px' }}>⭐</div>
+            <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
+              You just completed your first check-in!
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
+              If this resonated with you, would you take 10 seconds to rate us? It helps others in recovery find this tool.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '32px' }}>
+              {[1,2,3,4,5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => {
+                    setReviewRating(star);
+                    // Show thank you briefly, then continue
+                    setShowReviewThanks(true);
+                    setTimeout(() => {
+                      setShowReviewThanks(false);
+                      setOnboardingStep(19);
+                    }, 2000);
+                  }}
+                  onMouseEnter={() => setReviewRating(star)}
+                  onMouseLeave={() => setReviewRating(0)}
+                  style={{ 
+                    fontSize: '40px', 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    transform: reviewRating >= star ? 'scale(1.2)' : 'scale(1)',
+                    transition: 'transform 0.15s ease',
+                    filter: reviewRating >= star ? 'brightness(1.2)' : 'brightness(0.7)'
+                  }}
+                >
+                  ⭐
+                </button>
+              ))}
+            </div>
             <button
-              key={star}
-              onClick={() => {
-                // In a real app, this would trigger the native review prompt
-                setOnboardingStep(19);
-              }}
-              style={{ fontSize: '36px', background: 'none', border: 'none', cursor: 'pointer' }}
+              onClick={() => setOnboardingStep(19)}
+              style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', cursor: 'pointer' }}
             >
-              ⭐
+              Maybe later
             </button>
-          ))}
-        </div>
-        <button
-          onClick={() => setOnboardingStep(19)}
-          style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', cursor: 'pointer' }}
-        >
-          Maybe later
-        </button>
+          </>
+        ) : (
+          <>
+            <div style={{ fontSize: '80px', marginBottom: '24px' }}>💜</div>
+            <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
+              Thank you!
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', maxWidth: '320px' }}>
+              Your support means the world to us and helps others find their path to recovery.
+            </p>
+          </>
+        )}
       </div>,
 
       // 19. Commitment ceremony intro
