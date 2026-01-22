@@ -157,7 +157,7 @@ export default function RecoveryLock() {
   };
 
   // Handle checkout
-  const handleCheckout = async (plan: 'monthly' | 'yearly') => {
+  const handleCheckout = async (plan: 'weekly' | 'yearly') => {
     setIsCheckingSubscription(true);
     try {
       const response = await fetch('/api/stripe/checkout', {
@@ -1187,9 +1187,9 @@ export default function RecoveryLock() {
 
           {/* Pricing cards */}
           <div style={{ width: '100%', maxWidth: '340px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* Monthly */}
+            {/* Weekly */}
             <button
-              onClick={() => handleCheckout('monthly')}
+              onClick={() => handleCheckout('weekly')}
               disabled={isCheckingSubscription}
               style={{
                 background: 'rgba(255,255,255,0.1)',
@@ -1202,8 +1202,8 @@ export default function RecoveryLock() {
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ color: 'white', fontWeight: '600', fontSize: '18px' }}>Monthly</span>
-                <span style={{ color: '#f97316', fontWeight: 'bold', fontSize: '20px' }}>$4.99<span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>/mo</span></span>
+                <span style={{ color: 'white', fontWeight: '600', fontSize: '18px' }}>Weekly</span>
+                <span style={{ color: '#f97316', fontWeight: 'bold', fontSize: '20px' }}>$9.99<span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>/wk</span></span>
               </div>
               <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', margin: 0 }}>
                 Cancel anytime
@@ -1236,14 +1236,14 @@ export default function RecoveryLock() {
                 padding: '4px 12px',
                 borderRadius: '12px'
               }}>
-                SAVE 50%
+                SAVE 90%
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ color: 'white', fontWeight: '600', fontSize: '18px' }}>Yearly</span>
-                <span style={{ color: '#f97316', fontWeight: 'bold', fontSize: '20px' }}>$29.99<span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>/yr</span></span>
+                <span style={{ color: '#f97316', fontWeight: 'bold', fontSize: '20px' }}>$49.99<span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>/yr</span></span>
               </div>
               <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', margin: 0 }}>
-                Just $2.50/month • Best value
+                Just $0.96/week • Best value
               </p>
             </button>
           </div>
