@@ -332,68 +332,205 @@ export default function RecoveryLock() {
           <div className="text-7xl animate-pulse">🔒</div>
         </div>
         <h1 className="text-2xl font-bold text-gray-800">recovery lock</h1>
-        <p className="text-gray-500 mt-2">block your phone until you check in</p>
+        <p className="text-gray-500 mt-2">your daily commitment to recovery</p>
       </div>
     );
   }
 
-  // Onboarding
+  // Onboarding - Story-driven commitment ceremony
   if (screen === 'onboarding') {
     const screens = [
-      // Welcome
-      <div key="welcome" className="min-h-screen bg-gradient-to-b from-orange-500 to-orange-600 flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-8xl mb-6 drop-shadow-lg">🔒</div>
-        <h1 className="text-3xl font-bold mb-3">Recovery Lock</h1>
-        <p className="text-lg opacity-90 mb-8 text-center">Turn screen time into recovery time</p>
+      // 0. Opening - Dramatic hook
+      <div key="hook" className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-6xl mb-8 opacity-80">📱</div>
+        <h1 className="text-3xl font-bold mb-6 text-center leading-tight">
+          Your phone knows your secrets.
+        </h1>
+        <p className="text-lg text-white/60 mb-12 text-center max-w-xs">
+          It knows when you&apos;re vulnerable. When you&apos;re bored. When you&apos;re lonely.
+        </p>
         <button
           onClick={() => setOnboardingStep(1)}
-          className="w-full max-w-xs bg-white text-orange-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
-        >
-          Get Started
-        </button>
-      </div>,
-      
-      // Screen time shock
-      <div key="shock" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-6xl mb-6">📱</div>
-        <h2 className="text-2xl font-bold mb-4 text-center">The average person checks their phone</h2>
-        <div className="text-7xl font-bold text-orange-500 mb-4">96x</div>
-        <p className="text-lg opacity-70 mb-8 text-center">per day. What if each check-in strengthened your recovery?</p>
-        <button
-          onClick={() => setOnboardingStep(2)}
-          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+          className="w-full max-w-xs bg-white text-black font-semibold py-4 rounded-full text-lg active:scale-95 transition"
         >
           Continue
         </button>
       </div>,
-      
-      // Name input
-      <div key="name" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
-        <h2 className="text-2xl font-bold mb-8">What should we call you?</h2>
+
+      // 1. The problem deepens
+      <div key="problem" className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-white">
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          And it uses that against you.
+        </h2>
+        <div className="space-y-4 mb-8 max-w-xs">
+          <p className="text-white/70 text-center">Every notification. Every scroll. Every distraction.</p>
+          <p className="text-white/70 text-center">Designed to pull you away from what matters.</p>
+          <p className="text-white/70 text-center">Away from your recovery.</p>
+        </div>
+        <button
+          onClick={() => setOnboardingStep(2)}
+          className="w-full max-w-xs bg-white/10 border border-white/30 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          I know the feeling
+        </button>
+      </div>,
+
+      // 2. Statistics - emotional impact
+      <div key="stats" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <p className="text-white/50 text-sm mb-4">THE AVERAGE PERSON</p>
+        <div className="text-7xl font-bold text-orange-500 mb-2">96</div>
+        <p className="text-xl mb-8">phone pickups per day</p>
+        <div className="bg-white/5 rounded-2xl p-6 max-w-xs mb-8">
+          <p className="text-white/70 text-center text-sm leading-relaxed">
+            That&apos;s 96 moments where your addiction whispers.<br/>
+            96 chances to slip.<br/>
+            96 times you could choose differently.
+          </p>
+        </div>
+        <button
+          onClick={() => setOnboardingStep(3)}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          What if I could change that?
+        </button>
+      </div>,
+
+      // 3. The vision / transformation
+      <div key="vision" className="min-h-screen bg-gradient-to-b from-orange-600 to-orange-700 flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-6xl mb-6">✨</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          What if every unlock<br/>strengthened your recovery?
+        </h2>
+        <div className="space-y-3 mb-8 max-w-xs">
+          <p className="text-white/90 text-center">A moment to pause.</p>
+          <p className="text-white/90 text-center">A moment to breathe.</p>
+          <p className="text-white/90 text-center">A moment to remember who you&apos;re becoming.</p>
+        </div>
+        <button
+          onClick={() => setOnboardingStep(4)}
+          className="w-full max-w-xs bg-white text-orange-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+        >
+          Show me how
+        </button>
+      </div>,
+
+      // 4. How it works - simple
+      <div key="how1" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <p className="text-orange-500 text-sm font-semibold mb-4">HOW IT WORKS</p>
+        <div className="text-6xl mb-6">1️⃣</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          You reach for your phone
+        </h2>
+        <p className="text-white/60 text-center max-w-xs mb-8">
+          The same automatic gesture. The same habitual reach. But this time, something different happens.
+        </p>
+        <button
+          onClick={() => setOnboardingStep(5)}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          Next
+        </button>
+      </div>,
+
+      // 5. How it works - step 2
+      <div key="how2" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <p className="text-orange-500 text-sm font-semibold mb-4">HOW IT WORKS</p>
+        <div className="text-6xl mb-6">2️⃣</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Recovery Lock asks:<br/>&quot;How are you feeling?&quot;
+        </h2>
+        <p className="text-white/60 text-center max-w-xs mb-8">
+          A simple check-in. Your emotional state. Your craving level. Just honest awareness.
+        </p>
+        <button
+          onClick={() => setOnboardingStep(6)}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          Next
+        </button>
+      </div>,
+
+      // 6. How it works - step 3
+      <div key="how3" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <p className="text-orange-500 text-sm font-semibold mb-4">HOW IT WORKS</p>
+        <div className="text-6xl mb-6">3️⃣</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          You receive a personalized reflection
+        </h2>
+        <p className="text-white/60 text-center max-w-xs mb-8">
+          Wisdom from the 12 steps. Crafted for exactly where you are in this moment. A gentle reminder of your strength.
+        </p>
+        <button
+          onClick={() => setOnboardingStep(7)}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          Next
+        </button>
+      </div>,
+
+      // 7. How it works - result
+      <div key="how4" className="min-h-screen bg-gradient-to-b from-green-600 to-emerald-700 flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-6xl mb-6">🔓</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Then you continue,<br/>centered and present.
+        </h2>
+        <p className="text-white/80 text-center max-w-xs mb-8">
+          Not from avoidance. From awareness. Every unlock becomes a victory. Every day, you get stronger.
+        </p>
+        <button
+          onClick={() => setOnboardingStep(8)}
+          className="w-full max-w-xs bg-white text-green-700 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+        >
+          I&apos;m ready to begin
+        </button>
+      </div>,
+
+      // 8. Transition to personalization
+      <div key="personalize-intro" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-5xl mb-6">🤝</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Let&apos;s make this yours.
+        </h2>
+        <p className="text-white/60 text-center max-w-xs mb-8">
+          A few questions to personalize your recovery experience. Everything stays private on your device.
+        </p>
+        <button
+          onClick={() => setOnboardingStep(9)}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          Let&apos;s do it
+        </button>
+      </div>,
+
+      // 9. Name - warm and personal
+      <div key="name" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 1 OF 5</p>
+        <h2 className="text-2xl font-bold mb-2">What&apos;s your name?</h2>
+        <p className="text-white/50 mb-8 text-center">So we can make this personal</p>
         <input
           type="text"
           value={profile.name}
           onChange={(e) => setProfile({ ...profile, name: e.target.value })}
           placeholder="Your first name"
-          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-lg text-center mb-8 placeholder-white/50 focus:outline-none focus:border-orange-500"
+          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-xl text-center mb-8 placeholder-white/40 focus:outline-none focus:border-orange-500"
           autoFocus
         />
         <button
-          onClick={() => profile.name && setOnboardingStep(3)}
+          onClick={() => profile.name && setOnboardingStep(10)}
           disabled={!profile.name}
           className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
         >
           Continue
         </button>
       </div>,
-      
-      // Recovery focus - program selection
-      <div key="recovery-focus" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-5xl mb-4">🤝</div>
-        <h2 className="text-2xl font-bold mb-2 text-center">What brings you here?</h2>
-        <p className="text-white/60 mb-6 text-center text-sm">Select a fellowship or choose "Other" to describe your journey</p>
+
+      // 10. Recovery program
+      <div key="program" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 2 OF 5</p>
+        <h2 className="text-xl font-bold mb-2 text-center">What fellowship speaks to you, {profile.name}?</h2>
+        <p className="text-white/50 mb-4 text-center text-sm">This helps us tailor your reflections</p>
         
-        <div className="w-full max-w-xs space-y-2 mb-6 max-h-64 overflow-y-auto">
+        <div className="w-full max-w-xs space-y-2 mb-6 max-h-72 overflow-y-auto">
           {[
             { id: 'AA', label: 'Alcoholics Anonymous (AA)', emoji: '🍷' },
             { id: 'NA', label: 'Narcotics Anonymous (NA)', emoji: '💊' },
@@ -401,11 +538,11 @@ export default function RecoveryLock() {
             { id: 'GA', label: 'Gamblers Anonymous (GA)', emoji: '🎰' },
             { id: 'OA', label: 'Overeaters Anonymous (OA)', emoji: '🍽️' },
             { id: 'SA', label: 'Sexaholics Anonymous (SA)', emoji: '💔' },
-            { id: 'ACA', label: 'Adult Children of Alcoholics (ACA)', emoji: '👨‍👩‍👧' },
+            { id: 'ACA', label: 'Adult Children of Alcoholics', emoji: '👨‍👩‍👧' },
             { id: 'Al-Anon', label: 'Al-Anon / Alateen', emoji: '💙' },
             { id: 'SLAA', label: 'Sex & Love Addicts Anonymous', emoji: '💕' },
             { id: 'DA', label: 'Debtors Anonymous (DA)', emoji: '💳' },
-            { id: 'other', label: 'Other / Prefer to describe', emoji: '✨' },
+            { id: 'general', label: 'General Recovery / Other', emoji: '✨' },
           ].map((program) => (
             <button
               key={program.id}
@@ -413,7 +550,7 @@ export default function RecoveryLock() {
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition text-left ${
                 profile.recoveryProgram === program.id
                   ? 'bg-orange-500/20 border-orange-500 text-white'
-                  : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10'
+                  : 'bg-white/5 border-white/10 text-white/80'
               }`}
             >
               <span className="text-xl">{program.emoji}</span>
@@ -423,52 +560,47 @@ export default function RecoveryLock() {
         </div>
         
         <button
-          onClick={() => profile.recoveryProgram && setOnboardingStep(4)}
+          onClick={() => profile.recoveryProgram && setOnboardingStep(11)}
           disabled={!profile.recoveryProgram}
           className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
         >
           Continue
         </button>
       </div>,
-      
-      // Personal challenge description
-      <div key="challenge" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-5xl mb-4">🔍</div>
-        <h2 className="text-2xl font-bold mb-2 text-center">What are you working on?</h2>
-        <p className="text-white/60 mb-6 text-center text-sm px-4">
-          Describe the pattern, behavior, or challenge you're seeking support for. This stays private and helps personalize your reflections.
+
+      // 11. Personal challenge - deeper
+      <div key="challenge" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 3 OF 5</p>
+        <h2 className="text-xl font-bold mb-2 text-center">What are you working through?</h2>
+        <p className="text-white/50 mb-6 text-center text-sm px-4">
+          In your own words. This helps us understand your journey.
         </p>
         
         <textarea
           value={profile.primaryChallenge}
           onChange={(e) => setProfile({ ...profile, primaryChallenge: e.target.value })}
-          placeholder="Examples:
-• Alcohol dependency affecting my relationships
-• Compulsive spending and debt
-• Codependency patterns from childhood
-• Managing anxiety without substances
-• Breaking cycles of people-pleasing"
-          rows={5}
-          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-sm mb-4 placeholder-white/40 resize-none focus:outline-none focus:border-orange-500"
+          placeholder="I'm working on..."
+          rows={4}
+          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-base mb-4 placeholder-white/40 resize-none focus:outline-none focus:border-orange-500"
         />
         
-        <p className="text-white/40 text-xs mb-6 text-center px-4">
-          🔒 Your responses are stored only on your device
+        <p className="text-white/30 text-xs mb-6 text-center">
+          🔒 Stored only on your device. Never shared.
         </p>
         
         <button
-          onClick={() => setOnboardingStep(5)}
+          onClick={() => setOnboardingStep(12)}
           className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
         >
           {profile.primaryChallenge ? 'Continue' : 'Skip for now'}
         </button>
       </div>,
-      
-      // Sobriety date
-      <div key="date" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-5xl mb-4">📅</div>
-        <h2 className="text-2xl font-bold mb-2">When did your journey begin?</h2>
-        <p className="text-white/60 mb-8 text-center">Your sobriety or recovery start date</p>
+
+      // 12. Sobriety date - milestone focused
+      <div key="date" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 4 OF 5</p>
+        <h2 className="text-xl font-bold mb-2 text-center">When did your recovery journey begin?</h2>
+        <p className="text-white/50 mb-8 text-center text-sm">This can be your sobriety date, or when you committed to change</p>
         <input
           type="date"
           value={profile.sobrietyDate}
@@ -477,55 +609,285 @@ export default function RecoveryLock() {
           className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-lg text-center mb-8 text-white focus:outline-none focus:border-orange-500 [color-scheme:dark]"
         />
         <button
-          onClick={() => profile.sobrietyDate && setOnboardingStep(6)}
+          onClick={() => profile.sobrietyDate && setOnboardingStep(13)}
           disabled={!profile.sobrietyDate}
           className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
         >
           Continue
         </button>
       </div>,
-      
-      // Motivation
-      <div key="motivation" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-5xl mb-4">💪</div>
-        <h2 className="text-2xl font-bold mb-2">Why are you in recovery?</h2>
-        <p className="text-white/60 mb-6 text-center">This helps personalize your experience</p>
+
+      // 13. Why - the deep motivation
+      <div key="why" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <p className="text-orange-500 text-sm font-semibold mb-2">STEP 5 OF 5</p>
+        <h2 className="text-xl font-bold mb-2 text-center">Why does recovery matter to you?</h2>
+        <p className="text-white/50 mb-6 text-center text-sm">
+          This is your anchor. We&apos;ll remind you of it when things get hard.
+        </p>
         <textarea
           value={profile.motivation}
           onChange={(e) => setProfile({ ...profile, motivation: e.target.value })}
-          placeholder="For my family, my health, to be the person I know I can be..."
+          placeholder="I'm doing this because..."
           rows={4}
-          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-lg mb-8 placeholder-white/50 resize-none focus:outline-none focus:border-orange-500"
+          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-base mb-8 placeholder-white/40 resize-none focus:outline-none focus:border-orange-500"
         />
+        <button
+          onClick={() => setOnboardingStep(14)}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          {profile.motivation ? 'Continue' : 'Skip for now'}
+        </button>
+      </div>,
+
+      // 14. First experience - live demo check-in
+      <div key="demo-intro" className="min-h-screen bg-gradient-to-b from-orange-500 to-orange-600 flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-6xl mb-6">🎯</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Let&apos;s try your first check-in together.
+        </h2>
+        <p className="text-white/80 text-center max-w-xs mb-8">
+          This is what you&apos;ll experience every time you open a blocked app. Takes about 30 seconds.
+        </p>
+        <button
+          onClick={() => setOnboardingStep(15)}
+          className="w-full max-w-xs bg-white text-orange-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
+        >
+          Try it now
+        </button>
+      </div>,
+
+      // 15. Demo - Emotion slider
+      <div key="demo-emotion" style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #10b981, #059669)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        color: 'white'
+      }}>
+        <p style={{ fontSize: '12px', opacity: 0.7, marginBottom: '8px' }}>SAMPLE CHECK-IN</p>
+        <div style={{ fontSize: '80px', marginBottom: '24px' }}>
+          {emotionLabels[emotionalState]}
+        </div>
+        <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
+          How are you feeling right now?
+        </h2>
+        <p style={{ opacity: 0.8, marginBottom: '32px' }}>Be honest with yourself</p>
+        <input
+          type="range"
+          min="0"
+          max="4"
+          value={emotionalState}
+          onChange={(e) => setEmotionalState(Number(e.target.value))}
+          style={{ width: '100%', maxWidth: '280px', marginBottom: '40px' }}
+        />
+        <button
+          onClick={() => setOnboardingStep(16)}
+          style={{
+            width: '100%',
+            maxWidth: '280px',
+            background: 'white',
+            color: '#059669',
+            fontWeight: '600',
+            padding: '16px',
+            borderRadius: '9999px',
+            fontSize: '16px',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          Next
+        </button>
+      </div>,
+
+      // 16. Demo - Craving slider
+      <div key="demo-craving" style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #f43f5e, #e11d48)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        color: 'white'
+      }}>
+        <p style={{ fontSize: '12px', opacity: 0.7, marginBottom: '8px' }}>SAMPLE CHECK-IN</p>
+        <div style={{ fontSize: '64px', marginBottom: '16px' }}>
+          {['😌', '🙂', '😐', '😰', '🔥'][cravingLevel]}
+        </div>
+        <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
+          Any cravings right now?
+        </h2>
+        <p style={{ opacity: 0.8, marginBottom: '8px' }}>{cravingLabels[cravingLevel]}</p>
+        <input
+          type="range"
+          min="0"
+          max="4"
+          value={cravingLevel}
+          onChange={(e) => setCravingLevel(Number(e.target.value))}
+          style={{ width: '100%', maxWidth: '280px', marginBottom: '40px' }}
+        />
+        <button
+          onClick={() => setOnboardingStep(17)}
+          style={{
+            width: '100%',
+            maxWidth: '280px',
+            background: 'white',
+            color: '#e11d48',
+            fontWeight: '600',
+            padding: '16px',
+            borderRadius: '9999px',
+            fontSize: '16px',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          See my reflection
+        </button>
+      </div>,
+
+      // 17. Demo - Sample reflection
+      <div key="demo-reflection" style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #f97316, #ea580c)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        color: 'white'
+      }}>
+        <div style={{ fontSize: '48px', marginBottom: '24px' }}>🙏</div>
+        <p style={{ fontSize: '12px', opacity: 0.7, marginBottom: '16px', letterSpacing: '2px' }}>YOUR REFLECTION</p>
+        <p style={{ fontSize: '18px', textAlign: 'center', lineHeight: '1.7', marginBottom: '24px', maxWidth: '320px', fontStyle: 'italic' }}>
+          &quot;{profile.name}, you showed up today. That matters. Even when it&apos;s hard, even when you don&apos;t feel strong, you&apos;re here. One moment at a time. One breath at a time. You are exactly where you need to be.&quot;
+        </p>
+        <p style={{ opacity: 0.7, fontSize: '14px', marginBottom: '32px' }}>— Step 1: Honesty</p>
+        <button
+          onClick={() => setOnboardingStep(18)}
+          style={{
+            width: '100%',
+            maxWidth: '280px',
+            background: 'white',
+            color: '#ea580c',
+            fontWeight: '600',
+            padding: '16px',
+            borderRadius: '9999px',
+            fontSize: '16px',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          That was powerful
+        </button>
+      </div>,
+
+      // 18. Ask for review - EMOTIONAL PEAK (8-10 min mark)
+      <div key="review-ask" className="min-h-screen bg-[#1c1917] flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-6xl mb-6">⭐</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          You just completed your first check-in!
+        </h2>
+        <p className="text-white/70 text-center max-w-xs mb-8">
+          If this resonated with you, would you take 10 seconds to rate us? It helps others in recovery find this tool.
+        </p>
+        <div className="flex gap-2 mb-8">
+          {[1,2,3,4,5].map((star) => (
+            <button
+              key={star}
+              onClick={() => {
+                // In a real app, this would trigger the native review prompt
+                setOnboardingStep(19);
+              }}
+              className="text-4xl hover:scale-110 transition"
+            >
+              ⭐
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => setOnboardingStep(19)}
+          className="text-white/50 text-sm"
+        >
+          Maybe later
+        </button>
+      </div>,
+
+      // 19. Commitment ceremony intro
+      <div key="commitment-intro" className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-5xl mb-6">🕯️</div>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          One last thing, {profile.name}.
+        </h2>
+        <p className="text-white/70 text-center max-w-xs mb-8">
+          Recovery isn&apos;t just about stopping something. It&apos;s about becoming someone. Let&apos;s make a commitment together.
+        </p>
+        <button
+          onClick={() => setOnboardingStep(20)}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          I&apos;m ready
+        </button>
+      </div>,
+
+      // 20. The Commitment - sacred moment
+      <div key="commitment" className="min-h-screen bg-gradient-to-b from-[#1c1917] to-[#292524] flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-4xl mb-8">🔥</div>
+        <p className="text-orange-500 text-sm font-semibold mb-6 tracking-widest">MY COMMITMENT</p>
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 max-w-sm mb-8">
+          <p className="text-lg text-center leading-relaxed">
+            I, <span className="text-orange-400 font-semibold">{profile.name}</span>, commit to showing up for my recovery.
+          </p>
+          <p className="text-lg text-center leading-relaxed mt-4">
+            Not perfectly. Not fearlessly. But honestly.
+          </p>
+          <p className="text-lg text-center leading-relaxed mt-4">
+            One check-in at a time. One day at a time.
+          </p>
+          {profile.motivation && (
+            <p className="text-white/60 text-center mt-6 text-sm italic">
+              Because: &quot;{profile.motivation}&quot;
+            </p>
+          )}
+        </div>
         <button
           onClick={() => {
             const completeProfile = { 
               ...profile, 
               onboardingComplete: true,
-              trialStartDate: new Date().toISOString() // Start free trial
+              trialStartDate: new Date().toISOString()
             };
             saveProfile(completeProfile);
-            setOnboardingStep(7);
+            setOnboardingStep(21);
           }}
           className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
         >
-          Complete Setup
+          I commit to this
         </button>
       </div>,
-      
-      // Ready
-      <div key="ready" className="min-h-screen bg-gradient-to-b from-green-500 to-green-600 flex flex-col items-center justify-center p-6 text-white">
-        <div className="text-7xl mb-6">✨</div>
-        <h2 className="text-3xl font-bold mb-4">You&apos;re all set, {profile.name}!</h2>
-        <p className="text-lg opacity-90 mb-8 text-center">
-          {getDaysSober(profile.sobrietyDate)} days of recovery and counting.
-          <br />Every check-in makes you stronger.
+
+      // 21. Celebration / Welcome
+      <div key="welcome-final" className="min-h-screen bg-gradient-to-b from-green-500 to-emerald-600 flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-7xl mb-6">🎉</div>
+        <h2 className="text-3xl font-bold mb-4 text-center">
+          Welcome to Recovery Lock, {profile.name}
+        </h2>
+        <div className="bg-white/20 backdrop-blur rounded-2xl p-6 max-w-xs mb-8">
+          <div className="text-center">
+            <p className="text-5xl font-bold">{getDaysSober(profile.sobrietyDate)}</p>
+            <p className="text-white/80 mt-1">days in recovery</p>
+          </div>
+        </div>
+        <p className="text-white/80 text-center max-w-xs mb-8">
+          Every day you&apos;ve chosen recovery is a victory. Let&apos;s keep building on that.
         </p>
         <button
           onClick={() => setScreen('home')}
           className="w-full max-w-xs bg-white text-green-600 font-semibold py-4 rounded-full text-lg shadow-lg active:scale-95 transition"
         >
-          Start Using Recovery Lock
+          Begin my journey
         </button>
       </div>
     ];
