@@ -10,7 +10,7 @@ const getStripe = () => {
 };
 
 const PRICE_IDS = {
-  monthly: process.env.STRIPE_PRICE_MONTHLY || '',
+  weekly: process.env.STRIPE_PRICE_WEEKLY || '',
   yearly: process.env.STRIPE_PRICE_YEARLY || '',
 };
 
