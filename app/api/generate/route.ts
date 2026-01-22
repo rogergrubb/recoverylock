@@ -10,6 +10,8 @@ interface GenerateRequest {
   cravingLevel: number; // 0-4 (none to intense)
   feelingsText: string; // User's own description of how they're feeling
   checkInCount: number;
+  recoveryProgram: string; // AA, NA, CA, GA, OA, SA, etc.
+  primaryChallenge: string; // User's self-described challenge
 }
 
 const emotionDescriptions = [
@@ -125,11 +127,27 @@ function getCurrentStep() {
 export async function POST(request: NextRequest) {
   try {
     const body: GenerateRequest = await request.json();
-    const { name, daysSober, motivation, emotionalState, cravingLevel, feelingsText, checkInCount } = body;
+    const { name, daysSober, motivation, emotionalState, cravingLevel, feelingsText, checkInCount, recoveryProgram, primaryChallenge } = body;
 
     // Get this month's step for thematic content
     const currentStep = getCurrentStep();
     const monthName = new Date().toLocaleString('default', { month: 'long' });
+
+    // Map recovery program to fellowship name for natural language
+    const programNames: Record<string, string> = {
+      'AA': 'Alcoholics Anonymous',
+      'NA': 'Narcotics Anonymous',
+      'CA': 'Cocaine Anonymous',
+      'GA': 'Gamblers Anonymous',
+      'OA': 'Overeaters Anonymous',
+      'SA': 'Sexaholics Anonymous',
+      'ACA': 'Adult Children of Alcoholics',
+      'Al-Anon': 'Al-Anon',
+      'SLAA': 'Sex & Love Addicts Anonymous',
+      'DA': 'Debtors Anonymous',
+      'other': 'their recovery program'
+    };
+    const fellowshipName = programNames[recoveryProgram] || 'their recovery program';
 
     // If no API key, return thoughtful fallback
     if (!ANTHROPIC_API_KEY) {
@@ -141,6 +159,8 @@ export async function POST(request: NextRequest) {
 Context about this person:
 - Name: ${name}
 - Days in recovery: ${daysSober}
+- Recovery fellowship: ${fellowshipName}${recoveryProgram && recoveryProgram !== 'other' ? ` (${recoveryProgram})` : ''}
+- Their specific challenge/pattern they're working on: "${primaryChallenge || 'general recovery and personal growth'}"
 - Their personal motivation for recovery: "${motivation || 'Personal growth and health'}"
 - Current emotional state: ${emotionDescriptions[emotionalState]}
 - Craving level: ${cravingDescriptions[cravingLevel]}
@@ -156,15 +176,17 @@ Write a 2-3 sentence personalized reflection that:
 1. Uses their name naturally (not at the very start)
 2. ${feelingsText ? 'Directly addresses what they shared about their feelings' : 'Acknowledges their current emotional state and craving level appropriately'}
 3. Weaves in the monthly step's spiritual principle or themes naturally
-4. References their motivation if relevant
+4. References their specific challenge or pattern when relevant (but sensitively)
 5. Is encouraging without being preachy
 6. Feels fresh and personal, not generic
+7. Uses language appropriate to their fellowship (e.g., "clean" for NA, "abstinent" for OA)
 
 ${emotionalState <= 1 ? 'They need extra support and gentle encouragement today. Connect the step themes to finding strength in difficulty.' : ''}
-${cravingLevel >= 3 ? 'Acknowledge their strength in facing cravings. Relate to the step principle of ' + currentStep.spiritualPrinciple.toLowerCase() + '.' : ''}
+${cravingLevel >= 3 ? 'Acknowledge their strength in facing cravings/urges. Relate to the step principle of ' + currentStep.spiritualPrinciple.toLowerCase() + '.' : ''}
 ${daysSober < 30 ? 'They are in early recovery - celebrate every day as a victory.' : ''}
 ${daysSober >= 365 ? 'Acknowledge their significant milestone while keeping them grounded in daily practice.' : ''}
 ${feelingsText ? 'IMPORTANT: Since they took the time to share their feelings, make sure the reflection directly speaks to what they wrote.' : ''}
+${primaryChallenge ? 'Consider how the current step themes relate to their specific challenge of: ' + primaryChallenge : ''}
 
 Respond with ONLY a JSON object in this exact format:
 {"reflection": "your reflection text here"}`;
