@@ -10,6 +10,7 @@ interface UserProfile {
   onboardingComplete: boolean;
   recoveryProgram: string;  // AA, NA, CA, GA, OA, SA, ACA, Al-Anon, other
   primaryChallenge: string; // User's self-described challenge/pattern
+  checkInMode: 'everytime' | 'scheduled'; // How often to check in
   email?: string; // For subscription tracking
   trialStartDate?: string; // When free trial began
 }
@@ -128,7 +129,7 @@ const stepQuotes: { [key: number]: string[] } = {
 export default function RecoveryLock() {
   const [screen, setScreen] = useState<'loading' | 'onboarding' | 'home' | 'checkin-emotion' | 'checkin-craving' | 'checkin-feelings' | 'generating' | 'reflection' | 'history' | 'paywall'>('loading');
   const [onboardingStep, setOnboardingStep] = useState(0);
-  const [profile, setProfile] = useState<UserProfile>({ name: '', sobrietyDate: '', motivation: '', onboardingComplete: false, recoveryProgram: '', primaryChallenge: '' });
+  const [profile, setProfile] = useState<UserProfile>({ name: '', sobrietyDate: '', motivation: '', onboardingComplete: false, recoveryProgram: '', primaryChallenge: '', checkInMode: 'scheduled' });
   const [history, setHistory] = useState<CheckInEntry[]>([]);
   const [emotionalState, setEmotionalState] = useState(2);
   const [cravingLevel, setCravingLevel] = useState(1);
@@ -719,24 +720,99 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 14. First experience - live demo check-in
+      // 14. Check-in mode selection - let user choose intensity
+      <div key="checkin-mode" style={{ ...screenStyle, background: '#1c1917' }}>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>CHOOSE YOUR STYLE</p>
+        <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
+          How often do you want to check in?
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '24px', textAlign: 'center', fontSize: '14px' }}>
+          You can change this later in settings
+        </p>
+        
+        <div style={{ width: '100%', maxWidth: '340px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
+          {/* Every App Open option */}
+          <button
+            onClick={() => setProfile({ ...profile, checkInMode: 'everytime' })}
+            style={{
+              width: '100%',
+              padding: '20px',
+              borderRadius: '16px',
+              border: profile.checkInMode === 'everytime' ? '2px solid #f97316' : '1px solid rgba(255,255,255,0.1)',
+              background: profile.checkInMode === 'everytime' ? 'rgba(249,115,22,0.15)' : 'rgba(255,255,255,0.05)',
+              color: 'white',
+              cursor: 'pointer',
+              textAlign: 'left'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+              <span style={{ fontSize: '28px' }}>🔥</span>
+              <span style={{ fontSize: '18px', fontWeight: '600' }}>Every App Open</span>
+            </div>
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginLeft: '40px' }}>
+              Block distracting apps. Check in each time you try to open them. Maximum accountability.
+            </p>
+            <p style={{ fontSize: '12px', color: '#f97316', marginLeft: '40px', marginTop: '8px' }}>
+              ⚡ 10-50+ check-ins per day
+            </p>
+          </button>
+
+          {/* Scheduled option */}
+          <button
+            onClick={() => setProfile({ ...profile, checkInMode: 'scheduled' })}
+            style={{
+              width: '100%',
+              padding: '20px',
+              borderRadius: '16px',
+              border: profile.checkInMode === 'scheduled' ? '2px solid #f97316' : '1px solid rgba(255,255,255,0.1)',
+              background: profile.checkInMode === 'scheduled' ? 'rgba(249,115,22,0.15)' : 'rgba(255,255,255,0.05)',
+              color: 'white',
+              cursor: 'pointer',
+              textAlign: 'left'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+              <span style={{ fontSize: '28px' }}>🌅</span>
+              <span style={{ fontSize: '18px', fontWeight: '600' }}>3 Times Daily</span>
+            </div>
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginLeft: '40px' }}>
+              Morning, noon, and night. Deeper reflections at key moments. Sustainable routine.
+            </p>
+            <p style={{ fontSize: '12px', color: '#22c55e', marginLeft: '40px', marginTop: '8px' }}>
+              ✨ Recommended for beginners
+            </p>
+          </button>
+        </div>
+        
+        <button
+          onClick={() => setOnboardingStep(15)}
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
+        >
+          Continue
+        </button>
+      </div>,
+
+      // 15. First experience - live demo check-in
       <div key="demo-intro" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #f97316, #ea580c)' }}>
         <div style={{ fontSize: '64px', marginBottom: '24px' }}>🎯</div>
         <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
           Let&apos;s try your first check-in together.
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.8)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
-          This is what you&apos;ll experience every time you open a blocked app. Takes about 30 seconds.
+          {profile.checkInMode === 'everytime' 
+            ? "This is what you'll experience every time you open a blocked app. Takes about 30 seconds."
+            : "This is what you'll experience during your daily check-ins. Takes about 30 seconds."
+          }
         </p>
         <button
-          onClick={() => setOnboardingStep(15)}
+          onClick={() => setOnboardingStep(16)}
           style={{ ...buttonStyle, background: 'white', color: '#ea580c', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
         >
           Try it now
         </button>
       </div>,
 
-      // 15. Demo - Emotion slider
+      // 16. Demo - Emotion slider
       <div key="demo-emotion" style={{
         minHeight: '100vh',
         background: 'linear-gradient(to bottom, #10b981, #059669)',
@@ -764,7 +840,7 @@ export default function RecoveryLock() {
           style={{ width: '100%', maxWidth: '280px', marginBottom: '40px' }}
         />
         <button
-          onClick={() => setOnboardingStep(16)}
+          onClick={() => setOnboardingStep(17)}
           style={{
             width: '100%',
             maxWidth: '280px',
@@ -782,7 +858,7 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 16. Demo - Craving slider
+      // 17. Demo - Craving slider
       <div key="demo-craving" style={{
         minHeight: '100vh',
         background: 'linear-gradient(to bottom, #f43f5e, #e11d48)',
@@ -810,7 +886,7 @@ export default function RecoveryLock() {
           style={{ width: '100%', maxWidth: '280px', marginBottom: '40px' }}
         />
         <button
-          onClick={() => setOnboardingStep(17)}
+          onClick={() => setOnboardingStep(18)}
           style={{
             width: '100%',
             maxWidth: '280px',
@@ -828,7 +904,7 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 17. Demo - Sample reflection
+      // 18. Demo - Sample reflection
       <div key="demo-reflection" style={{
         minHeight: '100vh',
         background: 'linear-gradient(to bottom, #f97316, #ea580c)',
@@ -846,7 +922,7 @@ export default function RecoveryLock() {
         </p>
         <p style={{ opacity: 0.7, fontSize: '14px', marginBottom: '32px' }}>— Step 1: Honesty</p>
         <button
-          onClick={() => setOnboardingStep(18)}
+          onClick={() => setOnboardingStep(19)}
           style={{
             width: '100%',
             maxWidth: '280px',
@@ -864,7 +940,7 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 18. Ask for review - EMOTIONAL PEAK (8-10 min mark)
+      // 19. Ask for review - EMOTIONAL PEAK (8-10 min mark)
       <div key="review-ask" style={{ ...screenStyle, background: '#1c1917' }}>
         {!showReviewThanks ? (
           <>
@@ -885,7 +961,7 @@ export default function RecoveryLock() {
                     setShowReviewThanks(true);
                     setTimeout(() => {
                       setShowReviewThanks(false);
-                      setOnboardingStep(19);
+                      setOnboardingStep(20);
                     }, 2000);
                   }}
                   onMouseEnter={() => setReviewRating(star)}
@@ -905,7 +981,7 @@ export default function RecoveryLock() {
               ))}
             </div>
             <button
-              onClick={() => setOnboardingStep(19)}
+              onClick={() => setOnboardingStep(20)}
               style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', cursor: 'pointer' }}
             >
               Maybe later
@@ -924,7 +1000,7 @@ export default function RecoveryLock() {
         )}
       </div>,
 
-      // 19. Commitment ceremony intro
+      // 20. Commitment ceremony intro
       <div key="commitment-intro" style={{ ...screenStyle, background: '#000' }}>
         <div style={{ fontSize: '56px', marginBottom: '24px' }}>🕯️</div>
         <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
@@ -934,14 +1010,14 @@ export default function RecoveryLock() {
           Recovery isn&apos;t just about stopping something. It&apos;s about becoming someone. Let&apos;s make a commitment together.
         </p>
         <button
-          onClick={() => setOnboardingStep(20)}
+          onClick={() => setOnboardingStep(21)}
           style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           I&apos;m ready
         </button>
       </div>,
 
-      // 20. The Commitment - sacred moment
+      // 21. The Commitment - sacred moment
       <div key="commitment" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #1c1917, #292524)' }}>
         <div style={{ fontSize: '48px', marginBottom: '32px' }}>🔥</div>
         <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '24px', letterSpacing: '3px' }}>MY COMMITMENT</p>
@@ -969,7 +1045,7 @@ export default function RecoveryLock() {
               trialStartDate: new Date().toISOString()
             };
             saveProfile(completeProfile);
-            setOnboardingStep(21);
+            setOnboardingStep(22);
           }}
           style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
@@ -977,7 +1053,7 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 21. Celebration / Welcome
+      // 22. Celebration / Welcome
       <div key="welcome-final" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #22c55e, #059669)' }}>
         <div style={{ fontSize: '80px', marginBottom: '24px' }}>🎉</div>
         <h2 style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
@@ -989,9 +1065,19 @@ export default function RecoveryLock() {
             <p style={{ color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>days in recovery</p>
           </div>
         </div>
-        <p style={{ color: 'rgba(255,255,255,0.8)', textAlign: 'center', maxWidth: '320px', marginBottom: '32px' }}>
+        <p style={{ color: 'rgba(255,255,255,0.8)', textAlign: 'center', maxWidth: '320px', marginBottom: '16px' }}>
           Every day you&apos;ve chosen recovery is a victory. Let&apos;s keep building on that.
         </p>
+        {profile.checkInMode === 'scheduled' && (
+          <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', fontSize: '14px', marginBottom: '32px' }}>
+            📅 You&apos;ll check in 3 times daily
+          </p>
+        )}
+        {profile.checkInMode === 'everytime' && (
+          <p style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center', fontSize: '14px', marginBottom: '32px' }}>
+            🔥 Check-ins enabled for every app open
+          </p>
+        )}
         <button
           onClick={() => setScreen('home')}
           style={{ ...buttonStyle, background: 'white', color: '#16a34a', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
