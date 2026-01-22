@@ -246,7 +246,7 @@ export default function RecoveryLock() {
       </div>,
       
       // Screen time shock
-      <div key="shock" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+      <div key="shock" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
         <div className="text-6xl mb-6">📱</div>
         <h2 className="text-2xl font-bold mb-4 text-center">The average person checks their phone</h2>
         <div className="text-7xl font-bold text-orange-500 mb-4">96x</div>
@@ -260,7 +260,7 @@ export default function RecoveryLock() {
       </div>,
       
       // Name input
-      <div key="name" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+      <div key="name" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
         <h2 className="text-2xl font-bold mb-8">What should we call you?</h2>
         <input
           type="text"
@@ -280,7 +280,7 @@ export default function RecoveryLock() {
       </div>,
       
       // Recovery focus - program selection
-      <div key="recovery-focus" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+      <div key="recovery-focus" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
         <div className="text-5xl mb-4">🤝</div>
         <h2 className="text-2xl font-bold mb-2 text-center">What brings you here?</h2>
         <p className="text-white/60 mb-6 text-center text-sm">Select a fellowship or choose "Other" to describe your journey</p>
@@ -324,7 +324,7 @@ export default function RecoveryLock() {
       </div>,
       
       // Personal challenge description
-      <div key="challenge" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+      <div key="challenge" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
         <div className="text-5xl mb-4">🔍</div>
         <h2 className="text-2xl font-bold mb-2 text-center">What are you working on?</h2>
         <p className="text-white/60 mb-6 text-center text-sm px-4">
@@ -357,7 +357,7 @@ export default function RecoveryLock() {
       </div>,
       
       // Sobriety date
-      <div key="date" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+      <div key="date" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
         <div className="text-5xl mb-4">📅</div>
         <h2 className="text-2xl font-bold mb-2">When did your journey begin?</h2>
         <p className="text-white/60 mb-8 text-center">Your sobriety or recovery start date</p>
@@ -378,7 +378,7 @@ export default function RecoveryLock() {
       </div>,
       
       // Motivation
-      <div key="motivation" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+      <div key="motivation" className="min-h-screen bg-[#292524] flex flex-col items-center justify-center p-6 text-white">
         <div className="text-5xl mb-4">💪</div>
         <h2 className="text-2xl font-bold mb-2">Why are you in recovery?</h2>
         <p className="text-white/60 mb-6 text-center">This helps personalize your experience</p>
@@ -429,70 +429,113 @@ export default function RecoveryLock() {
     const greeting = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
     
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div style={{ minHeight: '100vh', background: '#FFF7ED', display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
-        <div className="bg-gradient-to-b from-orange-500 to-orange-600 p-6 pt-12 pb-8 rounded-b-[32px] shadow-lg">
-          <div className="flex justify-between items-start mb-6">
+        <div style={{
+          background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+          padding: '48px 24px 32px 24px',
+          borderRadius: '0 0 32px 32px',
+          boxShadow: '0 4px 20px rgba(234, 88, 12, 0.3)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
             <div>
-              <p className="text-white/80 text-sm">Good {greeting},</p>
-              <h1 className="text-white text-2xl font-bold">{profile.name}</h1>
+              <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginBottom: '4px' }}>Good {greeting},</p>
+              <h1 style={{ color: 'white', fontSize: '28px', fontWeight: 'bold', margin: 0 }}>{profile.name}</h1>
             </div>
             <button 
               onClick={() => setScreen('history')}
-              className="bg-white/20 p-3 rounded-full active:scale-95 transition"
+              style={{
+                background: 'rgba(255,255,255,0.2)',
+                border: 'none',
+                padding: '12px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                fontSize: '20px'
+              }}
             >
-              <span className="text-xl">📖</span>
+              📖
             </button>
           </div>
           
           {/* Stats cards */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white/20 backdrop-blur rounded-2xl p-4">
-              <p className="text-white/80 text-sm">Days Sober</p>
-              <p className="text-white text-3xl font-bold">{daysSober}</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div style={{
+              background: 'rgba(255,255,255,0.2)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '16px'
+            }}>
+              <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', margin: '0 0 4px 0' }}>Days Sober</p>
+              <p style={{ color: 'white', fontSize: '32px', fontWeight: 'bold', margin: 0 }}>{daysSober}</p>
             </div>
-            <div className="bg-white/20 backdrop-blur rounded-2xl p-4">
-              <p className="text-white/80 text-sm">Check-in Streak</p>
-              <p className="text-white text-3xl font-bold">{streak} 🔥</p>
+            <div style={{
+              background: 'rgba(255,255,255,0.2)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '16px'
+            }}>
+              <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', margin: '0 0 4px 0' }}>Check-in Streak</p>
+              <p style={{ color: 'white', fontSize: '32px', fontWeight: 'bold', margin: 0 }}>{streak} 🔥</p>
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-6 overflow-auto">
+        <div style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
           {/* This Month's Step */}
-          <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-5 mb-6 border border-orange-100">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-orange-600 text-sm font-medium">✨ {new Date().toLocaleString('default', { month: 'long' })}'s Focus</span>
-              <span className="bg-orange-200 text-orange-700 text-xs px-2 py-0.5 rounded-full">Step {currentStep.step}</span>
+          <div style={{
+            background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)',
+            borderRadius: '20px',
+            padding: '20px',
+            marginBottom: '24px',
+            border: '1px solid #FED7AA'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span style={{ color: '#ea580c', fontSize: '14px', fontWeight: '500' }}>🌟 {new Date().toLocaleString('default', { month: 'long' })}'s Focus</span>
+              <span style={{
+                background: '#FFEDD5',
+                color: '#c2410c',
+                fontSize: '12px',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontWeight: '500'
+              }}>Step {currentStep.step}</span>
             </div>
-            <p className="text-gray-800 font-medium mb-1">{currentStep.principle}</p>
-            <p className="text-gray-600 text-sm italic leading-relaxed">
+            <p style={{ color: '#1f2937', fontWeight: '600', margin: '0 0 8px 0', fontSize: '16px' }}>{currentStep.principle}</p>
+            <p style={{ color: '#6b7280', fontSize: '14px', fontStyle: 'italic', lineHeight: '1.5', margin: '0 0 8px 0' }}>
               "{dailyQuote}"
             </p>
-            <p className="text-gray-400 text-xs mt-2">— {currentStep.name}</p>
+            <p style={{ color: '#9ca3af', fontSize: '12px', margin: 0 }}>— {currentStep.name}</p>
           </div>
 
           {/* Recent check-ins */}
           {history.length > 0 && (
             <div>
-              <h3 className="text-gray-800 font-semibold mb-3">Recent Reflections</h3>
-              <div className="space-y-3">
+              <h3 style={{ color: '#1f2937', fontWeight: '600', marginBottom: '12px', fontSize: '16px' }}>Recent Reflections</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {history.slice(0, 3).map((entry) => (
                   <div 
                     key={entry.id} 
-                    className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition shadow-sm border border-gray-100"
                     onClick={() => {
                       setCurrentReflection(entry);
                       setScreen('reflection');
                     }}
+                    style={{
+                      background: 'white',
+                      borderRadius: '16px',
+                      padding: '16px',
+                      cursor: 'pointer',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                      border: '1px solid #f3f4f6',
+                      transition: 'box-shadow 0.2s'
+                    }}
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-800">{entry.title}</p>
-                        <p className="text-gray-500 text-sm">{entry.source}</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontWeight: '500', color: '#1f2937', margin: '0 0 4px 0' }}>{entry.title}</p>
+                        <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>{entry.source}</p>
                       </div>
-                      <p className="text-gray-400 text-sm ml-2">
+                      <p style={{ color: '#9ca3af', fontSize: '13px', marginLeft: '12px' }}>
                         {new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </p>
                     </div>
@@ -504,10 +547,25 @@ export default function RecoveryLock() {
         </div>
 
         {/* Check-in button */}
-        <div className="p-6 pb-8 bg-gradient-to-t from-gray-50">
+        <div style={{ padding: '24px', paddingBottom: '32px', background: 'linear-gradient(to top, #FFF7ED, transparent)' }}>
           <button
             onClick={() => setScreen('checkin-emotion')}
-            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold py-4 rounded-full text-lg shadow-lg flex items-center justify-center gap-2 active:scale-[0.98] transition"
+            style={{
+              width: '100%',
+              background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+              color: 'white',
+              fontWeight: '600',
+              padding: '18px',
+              borderRadius: '9999px',
+              fontSize: '18px',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 15px rgba(234, 88, 12, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
           >
             <span>🔓</span> Check In Now
           </button>
@@ -627,7 +685,7 @@ export default function RecoveryLock() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #3b82f6, #4f46e5)',
+        background: 'linear-gradient(to bottom, #f43f5e, #e11d48)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -701,7 +759,7 @@ export default function RecoveryLock() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #8b5cf6, #7c3aed)',
+        background: 'linear-gradient(to bottom, #c2410c, #9a3412)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -807,7 +865,7 @@ export default function RecoveryLock() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #a855f7, #7e22ce)',
+        background: 'linear-gradient(to bottom, #f59e0b, #d97706)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -817,11 +875,11 @@ export default function RecoveryLock() {
       }}>
         <div style={{ fontSize: '80px', marginBottom: '24px', animation: 'bounce 1s infinite' }}>✨</div>
         <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>Creating your reflection...</h2>
-        <p style={{ color: 'rgba(255,255,255,0.8)' }}>Personalized just for you, {profile.name}</p>
+        <p style={{ color: 'rgba(255,255,255,0.9)' }}>Personalized just for you, {profile.name}</p>
         <div style={{ marginTop: '32px', display: 'flex', gap: '8px' }}>
-          <div style={{ width: '12px', height: '12px', background: 'rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'pulse 1.5s infinite' }}></div>
-          <div style={{ width: '12px', height: '12px', background: 'rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'pulse 1.5s infinite 0.2s' }}></div>
-          <div style={{ width: '12px', height: '12px', background: 'rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'pulse 1.5s infinite 0.4s' }}></div>
+          <div style={{ width: '12px', height: '12px', background: 'rgba(255,255,255,0.6)', borderRadius: '50%', animation: 'pulse 1.5s infinite' }}></div>
+          <div style={{ width: '12px', height: '12px', background: 'rgba(255,255,255,0.6)', borderRadius: '50%', animation: 'pulse 1.5s infinite 0.2s' }}></div>
+          <div style={{ width: '12px', height: '12px', background: 'rgba(255,255,255,0.6)', borderRadius: '50%', animation: 'pulse 1.5s infinite 0.4s' }}></div>
         </div>
         <style>{`
           @keyframes bounce {
