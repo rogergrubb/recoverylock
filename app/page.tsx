@@ -8,6 +8,8 @@ interface UserProfile {
   sobrietyDate: string;
   motivation: string;
   onboardingComplete: boolean;
+  recoveryProgram: string;  // AA, NA, CA, GA, OA, SA, ACA, Al-Anon, other
+  primaryChallenge: string; // User's self-described challenge/pattern
 }
 
 interface CheckInEntry {
@@ -96,7 +98,7 @@ const stepQuotes: { [key: number]: string[] } = {
 export default function RecoveryLock() {
   const [screen, setScreen] = useState<'loading' | 'onboarding' | 'home' | 'checkin-emotion' | 'checkin-craving' | 'checkin-feelings' | 'generating' | 'reflection' | 'history'>('loading');
   const [onboardingStep, setOnboardingStep] = useState(0);
-  const [profile, setProfile] = useState<UserProfile>({ name: '', sobrietyDate: '', motivation: '', onboardingComplete: false });
+  const [profile, setProfile] = useState<UserProfile>({ name: '', sobrietyDate: '', motivation: '', onboardingComplete: false, recoveryProgram: '', primaryChallenge: '' });
   const [history, setHistory] = useState<CheckInEntry[]>([]);
   const [emotionalState, setEmotionalState] = useState(2);
   const [cravingLevel, setCravingLevel] = useState(1);
@@ -164,7 +166,9 @@ export default function RecoveryLock() {
           emotionalState,
           cravingLevel,
           feelingsText,
-          checkInCount: history.length + 1
+          checkInCount: history.length + 1,
+          recoveryProgram: profile.recoveryProgram,
+          primaryChallenge: profile.primaryChallenge
         })
       });
       
@@ -275,6 +279,83 @@ export default function RecoveryLock() {
         </button>
       </div>,
       
+      // Recovery focus - program selection
+      <div key="recovery-focus" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-5xl mb-4">🤝</div>
+        <h2 className="text-2xl font-bold mb-2 text-center">What brings you here?</h2>
+        <p className="text-white/60 mb-6 text-center text-sm">Select a fellowship or choose "Other" to describe your journey</p>
+        
+        <div className="w-full max-w-xs space-y-2 mb-6 max-h-64 overflow-y-auto">
+          {[
+            { id: 'AA', label: 'Alcoholics Anonymous (AA)', emoji: '🍷' },
+            { id: 'NA', label: 'Narcotics Anonymous (NA)', emoji: '💊' },
+            { id: 'CA', label: 'Cocaine Anonymous (CA)', emoji: '❄️' },
+            { id: 'GA', label: 'Gamblers Anonymous (GA)', emoji: '🎰' },
+            { id: 'OA', label: 'Overeaters Anonymous (OA)', emoji: '🍽️' },
+            { id: 'SA', label: 'Sexaholics Anonymous (SA)', emoji: '💔' },
+            { id: 'ACA', label: 'Adult Children of Alcoholics (ACA)', emoji: '👨‍👩‍👧' },
+            { id: 'Al-Anon', label: 'Al-Anon / Alateen', emoji: '💙' },
+            { id: 'SLAA', label: 'Sex & Love Addicts Anonymous', emoji: '💕' },
+            { id: 'DA', label: 'Debtors Anonymous (DA)', emoji: '💳' },
+            { id: 'other', label: 'Other / Prefer to describe', emoji: '✨' },
+          ].map((program) => (
+            <button
+              key={program.id}
+              onClick={() => setProfile({ ...profile, recoveryProgram: program.id })}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition text-left ${
+                profile.recoveryProgram === program.id
+                  ? 'bg-orange-500/20 border-orange-500 text-white'
+                  : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10'
+              }`}
+            >
+              <span className="text-xl">{program.emoji}</span>
+              <span className="text-sm">{program.label}</span>
+            </button>
+          ))}
+        </div>
+        
+        <button
+          onClick={() => profile.recoveryProgram && setOnboardingStep(4)}
+          disabled={!profile.recoveryProgram}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
+        >
+          Continue
+        </button>
+      </div>,
+      
+      // Personal challenge description
+      <div key="challenge" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
+        <div className="text-5xl mb-4">🔍</div>
+        <h2 className="text-2xl font-bold mb-2 text-center">What are you working on?</h2>
+        <p className="text-white/60 mb-6 text-center text-sm px-4">
+          Describe the pattern, behavior, or challenge you're seeking support for. This stays private and helps personalize your reflections.
+        </p>
+        
+        <textarea
+          value={profile.primaryChallenge}
+          onChange={(e) => setProfile({ ...profile, primaryChallenge: e.target.value })}
+          placeholder="Examples:
+• Alcohol dependency affecting my relationships
+• Compulsive spending and debt
+• Codependency patterns from childhood
+• Managing anxiety without substances
+• Breaking cycles of people-pleasing"
+          rows={5}
+          className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-sm mb-4 placeholder-white/40 resize-none focus:outline-none focus:border-orange-500"
+        />
+        
+        <p className="text-white/40 text-xs mb-6 text-center px-4">
+          🔒 Your responses are stored only on your device
+        </p>
+        
+        <button
+          onClick={() => setOnboardingStep(5)}
+          className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
+        >
+          {profile.primaryChallenge ? 'Continue' : 'Skip for now'}
+        </button>
+      </div>,
+      
       // Sobriety date
       <div key="date" className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center p-6 text-white">
         <div className="text-5xl mb-4">📅</div>
@@ -288,7 +369,7 @@ export default function RecoveryLock() {
           className="w-full max-w-xs bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-lg text-center mb-8 text-white focus:outline-none focus:border-orange-500 [color-scheme:dark]"
         />
         <button
-          onClick={() => profile.sobrietyDate && setOnboardingStep(4)}
+          onClick={() => profile.sobrietyDate && setOnboardingStep(6)}
           disabled={!profile.sobrietyDate}
           className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg disabled:opacity-50 active:scale-95 transition"
         >
@@ -312,7 +393,7 @@ export default function RecoveryLock() {
           onClick={() => {
             const completeProfile = { ...profile, onboardingComplete: true };
             saveProfile(completeProfile);
-            setOnboardingStep(5);
+            setOnboardingStep(7);
           }}
           className="w-full max-w-xs bg-orange-500 text-white font-semibold py-4 rounded-full text-lg active:scale-95 transition"
         >
