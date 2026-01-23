@@ -34,7 +34,7 @@ interface CheckInEntry {
 }
 
 // Free trial duration in days
-const FREE_TRIAL_DAYS = 7;
+const FREE_TRIAL_DAYS = 5;
 
 // Check if user is in free trial period (local, before Stripe)
 function isInFreeTrial(trialStartDate?: string): boolean {
