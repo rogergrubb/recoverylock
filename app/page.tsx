@@ -1770,6 +1770,32 @@ export default function RecoveryLock() {
           >
             Done
           </button>
+          
+          {/* Call Support Person - only show if they have one saved */}
+          {profile.supportPersonPhone && (
+            <a
+              href={`tel:${profile.supportPersonPhone}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                width: '100%',
+                background: 'rgba(255,255,255,0.25)',
+                color: 'white',
+                fontWeight: '600',
+                padding: '16px',
+                borderRadius: '9999px',
+                fontSize: '16px',
+                marginBottom: '12px',
+                textDecoration: 'none',
+                border: '1px solid rgba(255,255,255,0.3)'
+              }}
+            >
+              📞 Call {profile.supportPersonName || 'My Support Person'}
+            </a>
+          )}
+          
           <button
             onClick={() => {
               setEmotionalState(2);
