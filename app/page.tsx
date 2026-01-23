@@ -11,6 +11,8 @@ interface UserProfile {
   recoveryProgram: string;  // AA, NA, CA, GA, OA, SA, ACA, Al-Anon, other
   primaryChallenge: string; // User's self-described challenge/pattern
   checkInMode: 'everytime' | 'scheduled'; // How often to check in
+  supportPersonName?: string; // Sponsor, friend, family, counselor, pastor
+  supportPersonPhone?: string; // Quick-dial in crisis
   email?: string; // For subscription tracking
   trialStartDate?: string; // When free trial began
 }
@@ -688,7 +690,7 @@ export default function RecoveryLock() {
 
       // 13. Why - the deep motivation
       <div key="why" style={{ ...screenStyle, background: '#1c1917' }}>
-        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>STEP 5 OF 5</p>
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>STEP 5 OF 6</p>
         <h2 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>Why does recovery matter to you?</h2>
         <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '24px', textAlign: 'center', fontSize: '14px' }}>
           This is your anchor. We&apos;ll remind you of it when things get hard.
@@ -720,7 +722,89 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 14. Check-in mode selection - let user choose intensity
+      // 14. Support Person - who to call in crisis
+      <div key="support-person" style={{ ...screenStyle, background: '#1c1917', paddingTop: '40px' }}>
+        {/* EMERGENCY BANNER - PROMINENT */}
+        <div style={{
+          background: '#dc2626',
+          padding: '16px 20px',
+          borderRadius: '12px',
+          marginBottom: '24px',
+          width: '100%',
+          maxWidth: '340px',
+          boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)'
+        }}>
+          <p style={{ color: 'white', fontSize: '14px', textAlign: 'center', margin: 0, fontWeight: '600', marginBottom: '8px' }}>
+            🚨 If your life is in danger, call now:
+          </p>
+          <p style={{ color: 'white', fontSize: '13px', textAlign: 'center', margin: 0, lineHeight: 1.6 }}>
+            <strong>911</strong> (US/CA) • <strong>999</strong> (UK) • <strong>112</strong> (EU)<br/>
+            <strong>000</strong> (AU) • <strong>111</strong> (NZ) • <strong>108</strong> (IN)
+          </p>
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px', textAlign: 'center', margin: 0, marginTop: '8px' }}>
+            Suicide Hotline: <strong>988</strong> (US) • <strong>116 123</strong> (UK)
+          </p>
+        </div>
+
+        <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>STEP 6 OF 6</p>
+        <h2 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
+          Who can you call when it gets hard?
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '20px', textAlign: 'center', fontSize: '14px', padding: '0 16px', lineHeight: 1.5 }}>
+          Your sponsor, trusted friend, family member, counselor, or pastor. One tap away can make all the difference.
+        </p>
+        
+        <input
+          type="text"
+          value={profile.supportPersonName || ''}
+          onChange={(e) => setProfile({ ...profile, supportPersonName: e.target.value })}
+          placeholder="Their name (optional)"
+          style={{
+            width: '100%',
+            maxWidth: '320px',
+            background: 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+            fontSize: '16px',
+            marginBottom: '12px',
+            color: 'white',
+            outline: 'none'
+          }}
+        />
+        
+        <input
+          type="tel"
+          value={profile.supportPersonPhone || ''}
+          onChange={(e) => setProfile({ ...profile, supportPersonPhone: e.target.value })}
+          placeholder="Their phone number (optional)"
+          style={{
+            width: '100%',
+            maxWidth: '320px',
+            background: 'rgba(255,255,255,0.1)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+            fontSize: '16px',
+            marginBottom: '16px',
+            color: 'white',
+            outline: 'none'
+          }}
+        />
+        
+        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', marginBottom: '24px', textAlign: 'center' }}>
+          🔒 Stored only on your device. Never shared.
+        </p>
+        
+        <button
+          onClick={() => setOnboardingStep(15)}
+          style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
+        >
+          {profile.supportPersonPhone ? 'Save & Continue' : 'Skip for now'}
+        </button>
+      </div>,
+
+      // 15. Check-in mode selection - let user choose intensity
       <div key="checkin-mode" style={{ ...screenStyle, background: '#1c1917' }}>
         <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '8px', letterSpacing: '1px' }}>CHOOSE YOUR STYLE</p>
         <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
@@ -785,14 +869,14 @@ export default function RecoveryLock() {
         </div>
         
         <button
-          onClick={() => setOnboardingStep(15)}
+          onClick={() => setOnboardingStep(16)}
           style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           Continue
         </button>
       </div>,
 
-      // 15. First experience - live demo check-in
+      // 16. First experience - live demo check-in
       <div key="demo-intro" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #f97316, #ea580c)' }}>
         <div style={{ fontSize: '64px', marginBottom: '24px' }}>🎯</div>
         <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
@@ -805,14 +889,14 @@ export default function RecoveryLock() {
           }
         </p>
         <button
-          onClick={() => setOnboardingStep(16)}
+          onClick={() => setOnboardingStep(23)}
           style={{ ...buttonStyle, background: 'white', color: '#ea580c', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
         >
           Try it now
         </button>
       </div>,
 
-      // 16. Demo - Emotion slider
+      // 17. Demo - Emotion slider
       <div key="demo-emotion" style={{
         minHeight: '100vh',
         background: 'linear-gradient(to bottom, #10b981, #059669)',
@@ -840,7 +924,7 @@ export default function RecoveryLock() {
           style={{ width: '100%', maxWidth: '280px', marginBottom: '40px' }}
         />
         <button
-          onClick={() => setOnboardingStep(17)}
+          onClick={() => setOnboardingStep(23)}
           style={{
             width: '100%',
             maxWidth: '280px',
@@ -858,7 +942,7 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 17. Demo - Craving slider
+      // 18. Demo - Craving slider
       <div key="demo-craving" style={{
         minHeight: '100vh',
         background: 'linear-gradient(to bottom, #f43f5e, #e11d48)',
@@ -886,7 +970,7 @@ export default function RecoveryLock() {
           style={{ width: '100%', maxWidth: '280px', marginBottom: '40px' }}
         />
         <button
-          onClick={() => setOnboardingStep(18)}
+          onClick={() => setOnboardingStep(23)}
           style={{
             width: '100%',
             maxWidth: '280px',
@@ -904,7 +988,7 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 18. Demo - Sample reflection
+      // 19. Demo - Sample reflection
       <div key="demo-reflection" style={{
         minHeight: '100vh',
         background: 'linear-gradient(to bottom, #f97316, #ea580c)',
@@ -922,7 +1006,7 @@ export default function RecoveryLock() {
         </p>
         <p style={{ opacity: 0.7, fontSize: '14px', marginBottom: '32px' }}>— Step 1: Honesty</p>
         <button
-          onClick={() => setOnboardingStep(19)}
+          onClick={() => setOnboardingStep(23)}
           style={{
             width: '100%',
             maxWidth: '280px',
@@ -940,7 +1024,7 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 19. Ask for review - EMOTIONAL PEAK (8-10 min mark)
+      // 20. Ask for review - EMOTIONAL PEAK (8-10 min mark)
       <div key="review-ask" style={{ ...screenStyle, background: '#1c1917' }}>
         {!showReviewThanks ? (
           <>
@@ -961,7 +1045,7 @@ export default function RecoveryLock() {
                     setShowReviewThanks(true);
                     setTimeout(() => {
                       setShowReviewThanks(false);
-                      setOnboardingStep(20);
+                      setOnboardingStep(23);
                     }, 2000);
                   }}
                   onMouseEnter={() => setReviewRating(star)}
@@ -981,7 +1065,7 @@ export default function RecoveryLock() {
               ))}
             </div>
             <button
-              onClick={() => setOnboardingStep(20)}
+              onClick={() => setOnboardingStep(23)}
               style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', cursor: 'pointer' }}
             >
               Maybe later
@@ -1000,7 +1084,7 @@ export default function RecoveryLock() {
         )}
       </div>,
 
-      // 20. Commitment ceremony intro
+      // 21. Commitment ceremony intro
       <div key="commitment-intro" style={{ ...screenStyle, background: '#000' }}>
         <div style={{ fontSize: '56px', marginBottom: '24px' }}>🕯️</div>
         <h2 style={{ fontSize: '26px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
@@ -1010,14 +1094,14 @@ export default function RecoveryLock() {
           Recovery isn&apos;t just about stopping something. It&apos;s about becoming someone. Let&apos;s make a commitment together.
         </p>
         <button
-          onClick={() => setOnboardingStep(21)}
+          onClick={() => setOnboardingStep(23)}
           style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
           I&apos;m ready
         </button>
       </div>,
 
-      // 21. The Commitment - sacred moment
+      // 22. The Commitment - sacred moment
       <div key="commitment" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #1c1917, #292524)' }}>
         <div style={{ fontSize: '48px', marginBottom: '32px' }}>🔥</div>
         <p style={{ color: '#f97316', fontSize: '14px', fontWeight: '600', marginBottom: '24px', letterSpacing: '3px' }}>MY COMMITMENT</p>
@@ -1045,7 +1129,7 @@ export default function RecoveryLock() {
               trialStartDate: new Date().toISOString()
             };
             saveProfile(completeProfile);
-            setOnboardingStep(22);
+            setOnboardingStep(23);
           }}
           style={{ ...buttonStyle, background: '#f97316', color: 'white' }}
         >
@@ -1053,7 +1137,7 @@ export default function RecoveryLock() {
         </button>
       </div>,
 
-      // 22. Celebration / Welcome
+      // 23. Celebration / Welcome
       <div key="welcome-final" style={{ ...screenStyle, background: 'linear-gradient(to bottom, #22c55e, #059669)' }}>
         <div style={{ fontSize: '80px', marginBottom: '24px' }}>🎉</div>
         <h2 style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
@@ -1240,7 +1324,7 @@ export default function RecoveryLock() {
         </div>
 
         {/* Check-in button */}
-        <div style={{ padding: '24px', paddingBottom: '16px', background: 'linear-gradient(to top, #FFF7ED, transparent)' }}>
+        <div style={{ padding: '24px', paddingBottom: '12px', background: 'linear-gradient(to top, #FFF7ED, transparent)' }}>
           <button
             onClick={() => setScreen('checkin-emotion')}
             style={{
@@ -1262,6 +1346,47 @@ export default function RecoveryLock() {
           >
             <span>🔓</span> Check In Now
           </button>
+          
+          {/* Call Support Person button - only show if they have one */}
+          {profile.supportPersonPhone && (
+            <a
+              href={`tel:${profile.supportPersonPhone}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                width: '100%',
+                background: '#22c55e',
+                color: 'white',
+                fontWeight: '600',
+                padding: '14px',
+                borderRadius: '9999px',
+                fontSize: '16px',
+                marginTop: '12px',
+                textDecoration: 'none',
+                boxShadow: '0 2px 8px rgba(34, 197, 94, 0.3)'
+              }}
+            >
+              <span>📞</span> Call {profile.supportPersonName || 'Support Person'}
+            </a>
+          )}
+        </div>
+
+        {/* Crisis Resources - Always visible */}
+        <div style={{ 
+          background: '#fef2f2', 
+          margin: '0 16px', 
+          padding: '12px 16px', 
+          borderRadius: '12px',
+          border: '1px solid #fecaca'
+        }}>
+          <p style={{ color: '#dc2626', fontSize: '12px', fontWeight: '600', margin: '0 0 4px 0', textAlign: 'center' }}>
+            🚨 In crisis? You&apos;re not alone.
+          </p>
+          <p style={{ color: '#7f1d1d', fontSize: '11px', margin: 0, textAlign: 'center', lineHeight: 1.4 }}>
+            <strong>911</strong> (US) • <strong>988</strong> (Suicide Hotline) • <strong>999</strong> (UK) • <strong>112</strong> (EU)
+          </p>
         </div>
 
         {/* Footer links */}
