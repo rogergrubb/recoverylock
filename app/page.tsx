@@ -1240,7 +1240,7 @@ export default function RecoveryLock() {
         </div>
 
         {/* Check-in button */}
-        <div style={{ padding: '24px', paddingBottom: '32px', background: 'linear-gradient(to top, #FFF7ED, transparent)' }}>
+        <div style={{ padding: '24px', paddingBottom: '16px', background: 'linear-gradient(to top, #FFF7ED, transparent)' }}>
           <button
             onClick={() => setScreen('checkin-emotion')}
             style={{
@@ -1262,6 +1262,21 @@ export default function RecoveryLock() {
           >
             <span>🔓</span> Check In Now
           </button>
+        </div>
+
+        {/* Footer links */}
+        <div style={{ 
+          padding: '16px 24px 32px', 
+          display: 'flex', 
+          gap: '16px', 
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          background: '#FFF7ED'
+        }}>
+          <a href="/privacy" style={{ color: '#9ca3af', fontSize: '12px', textDecoration: 'none' }}>Privacy</a>
+          <a href="/terms" style={{ color: '#9ca3af', fontSize: '12px', textDecoration: 'none' }}>Terms</a>
+          <a href="/support" style={{ color: '#9ca3af', fontSize: '12px', textDecoration: 'none' }}>Support</a>
+          <a href="/delete-account" style={{ color: '#9ca3af', fontSize: '12px', textDecoration: 'none' }}>Delete Account</a>
         </div>
       </div>
     );
@@ -1847,8 +1862,21 @@ export default function RecoveryLock() {
 
         {/* Terms */}
         <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '11px', textAlign: 'center', marginTop: '16px' }}>
-          7-day free trial, then billed automatically. Cancel anytime.
+          5-day free trial, then billed automatically. Cancel anytime.
         </p>
+
+        {/* Legal Links */}
+        <div style={{ 
+          marginTop: '24px', 
+          display: 'flex', 
+          gap: '16px', 
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <a href="/privacy" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', textDecoration: 'none' }}>Privacy Policy</a>
+          <a href="/terms" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', textDecoration: 'none' }}>Terms of Service</a>
+          <a href="/support" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', textDecoration: 'none' }}>Support</a>
+        </div>
       </div>
     );
   }
