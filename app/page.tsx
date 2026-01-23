@@ -1479,10 +1479,10 @@ export default function RecoveryLock() {
         
         <div style={{ fontSize: '64px', marginBottom: '24px' }}>💭</div>
         <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px', textAlign: 'center' }}>
-          What's on your mind?
+          What&apos;s on your mind?
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '24px', textAlign: 'center', padding: '0 16px', fontSize: '15px', lineHeight: '1.5' }}>
-          Share what you're going through right now. This helps personalize your reflection.
+          Share what you&apos;re going through right now. This helps personalize your reflection.
         </p>
         
         <textarea
@@ -1493,16 +1493,17 @@ export default function RecoveryLock() {
           style={{
             width: '100%',
             maxWidth: '300px',
-            background: 'rgba(255,255,255,0.15)',
-            border: '2px solid rgba(255,255,255,0.3)',
+            background: 'white',
+            border: 'none',
             borderRadius: '16px',
             padding: '16px',
             fontSize: '16px',
-            color: 'white',
+            color: '#1c1917',
             marginBottom: '16px',
             resize: 'none',
             outline: 'none',
-            lineHeight: '1.5'
+            lineHeight: '1.5',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
           }}
         />
         
